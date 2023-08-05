@@ -1,0 +1,34 @@
+name: "stardrop"
+
+on:
+  push:
+    branches:
+      - main
+
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📬 Check out code
+        uses: actions/checkout@v3
+      - name: ✨ Setup pnpm@7
+        uses: pnpm/action-setup@v2.2.2
+        with:
+          version: 8.6.5
+      - name: ✨ Setup Node.js environment
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20.3.1"
+          cache: "pnpm"
+          cache-dependency-path: pnpm-lock.yaml
+      - name: 🍱 Install dependencies
+        run: pnpm install
+      - name: 💄 Run Linter
+        run: pnpm lint
+      - name: ✅ All good
+        run: echo "✅ All good" >> $GITHUB_STEP_SUMMARY
