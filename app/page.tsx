@@ -19,7 +19,7 @@ export default function Home() {
         <NavigationMenu>
           <NavigationMenuList>
             <NavigationMenuItem>
-              <NavigationMenuTrigger className="bg-transparent hover:bg-white/20 hover:text-white data-[state=open]:bg-white/20 flex flex-row space-x-2">
+              <NavigationMenuTrigger className="bg-transparent hover:bg-white/20 hover:text-white data-[state=open]:bg-white/20 flex flex-row space-x-2 focus:bg-transparent focus:text-white focus-visible:outline-none focus-visible:ring focus-visible:ring-blue-500">
                 <Image
                   className=""
                   src="/stardrop.svg"
