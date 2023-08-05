@@ -15,7 +15,7 @@ import {
 export default function Home() {
   return (
     <main className="bg-black text-white min-h-screen">
-      <div className="flex justify-between w-full px-6 py-4">
+      <div className="flex justify-between w-full px-2 py-4">
         <NavigationMenu>
           <NavigationMenuList>
             <NavigationMenuItem>
