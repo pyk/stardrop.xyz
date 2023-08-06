@@ -3,7 +3,7 @@
 import * as React from "react";
 import * as NavigationMenuPrimitive from "@radix-ui/react-navigation-menu";
 import { cva } from "class-variance-authority";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Menu, ChevronUpCircle } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
@@ -63,6 +63,29 @@ const NavigationMenuTrigger = React.forwardRef<
   </NavigationMenuPrimitive.Trigger>
 ));
 NavigationMenuTrigger.displayName =
+  NavigationMenuPrimitive.Trigger.displayName;
+
+const navigationLogoTriggerStyle = cva(
+  "group inline-flex h-10 w-max items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors hover:bg-white/20 hover:text-white focus:bg-transparent focus:text-white focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-accent/50 data-[state=open]:bg-white/20 focus-visible:outline-none  focus-visible:ring focus-visible:ring-blue-500"
+);
+
+const NavigationLogoTrigger = React.forwardRef<
+  React.ElementRef<typeof NavigationMenuPrimitive.Trigger>,
+  React.ComponentPropsWithoutRef<typeof NavigationMenuPrimitive.Trigger>
+>(({ className, children, ...props }, ref) => (
+  <NavigationMenuPrimitive.Trigger
+    ref={ref}
+    className={cn(navigationLogoTriggerStyle(), "group", className)}
+    {...props}
+  >
+    {children}{" "}
+    <Menu
+      className="relative top-[1px] ml-1 h-3 w-3 transition duration-200 group-data-[state=open]:rotate-180"
+      aria-hidden="true"
+    />
+  </NavigationMenuPrimitive.Trigger>
+));
+NavigationLogoTrigger.displayName =
   NavigationMenuPrimitive.Trigger.displayName;
 
 const NavigationMenuContent = React.forwardRef<
@@ -126,6 +149,7 @@ export {
   NavigationMenuItem,
   NavigationMenuContent,
   NavigationMenuTrigger,
+  NavigationLogoTrigger,
   NavigationMenuLink,
   NavigationMenuIndicator,
   NavigationMenuViewport,
