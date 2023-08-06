@@ -14,6 +14,7 @@ import {
 import * as React from "react";
 import { cn } from "@/lib/utils";
 import { Icons } from "@/components/icons";
+import { Button } from "@/components/ui/button";
 
 export default function Home() {
   return (
@@ -23,7 +24,7 @@ export default function Home() {
           <NavigationMenuList>
             <NavigationMenuItem>
               <NavigationLogoTrigger className="flex flex-row space-x-2">
-                <Icons.logo className="h-6 w-6" />
+                <Icons.logo className="h-6 w-6 fill-white stroke-white" />
                 <span>Stardrop</span>
               </NavigationLogoTrigger>
               <NavigationMenuContent>
@@ -63,7 +64,12 @@ export default function Home() {
           </NavigationMenuList>
         </NavigationMenu>
 
-        <button>discord</button>
+        <Button variant="ghost" asChild>
+          <Link href="https://discord.gg/">
+            <Icons.discord className="h-4 w-4 fill-white mr-2" />
+            Join discord
+          </Link>
+        </Button>
       </div>
     </main>
   );
