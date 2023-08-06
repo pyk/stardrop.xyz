@@ -76,3 +76,7 @@
     @apply bg-background text-foreground;
   }
 }
+
+.button-focus-visible {
+  @apply focus-visible:outline-none focus-visible:ring focus-visible:ring-blue-500;
+}

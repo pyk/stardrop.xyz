@@ -66,7 +66,7 @@ NavigationMenuTrigger.displayName =
   NavigationMenuPrimitive.Trigger.displayName;
 
 const navigationLogoTriggerStyle = cva(
-  "group inline-flex h-10 w-max items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors hover:bg-white/20 hover:text-white focus:bg-transparent focus:text-white focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-accent/50 data-[state=open]:bg-white/20 focus-visible:outline-none  focus-visible:ring focus-visible:ring-blue-500"
+  "group inline-flex h-10 w-max items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors hover:bg-white/20 hover:text-white focus:bg-transparent focus:text-white focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-accent/50 data-[state=open]:bg-white/20 button-focus-visible"
 );
 
 const NavigationLogoTrigger = React.forwardRef<
