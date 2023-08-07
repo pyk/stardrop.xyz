@@ -29,13 +29,13 @@ export default function Home() {
                 <Icons.logo className="h-6 w-6 fill-white stroke-white" />
                 <span>Stardrop</span>
               </NavigationLogoTrigger>
-              <NavigationMenuContent className="bg-white min-w-[320px] min-h-max px-2 py-6 rounded-lg flex flex-col space-y-4">
+              <NavigationMenuContent className="bg-white min-w-[320px] min-h-max px-4 py-6 rounded-lg flex flex-col space-y-4">
                 <div>
                   <h3 className="text-slate-400 px-4">Navigation</h3>
                   <ul>
                     <li>
                       <Link
-                        className="flex flex-row items-center space-x-2 text-slate-900 px-4 py-1 hover:bg-slate-100 rounded-md"
+                        className="flex flex-row items-center space-x-2 text-slate-900 px-4 py-2 hover:bg-slate-100 rounded-md button-focus-visible"
                         href="/"
                       >
                         <Plus size={16} />
@@ -44,7 +44,7 @@ export default function Home() {
                     </li>
                     <li>
                       <Link
-                        className="flex flex-row items-center space-x-2 text-slate-900 px-4 py-1 hover:bg-slate-100 rounded-md"
+                        className="flex flex-row items-center space-x-2 text-slate-900 px-4 py-2 hover:bg-slate-100 rounded-md button-focus-visible"
                         href="/"
                       >
                         <Globe size={16} />
@@ -53,7 +53,7 @@ export default function Home() {
                     </li>
                     <li>
                       <Link
-                        className="flex flex-row items-center space-x-2 text-slate-900 px-4 py-1 hover:bg-slate-100 rounded-md"
+                        className="flex flex-row items-center space-x-2 text-slate-900 px-4 py-2 hover:bg-slate-100 rounded-md button-focus-visible"
                         href="/"
                       >
                         <Star size={16} />
@@ -67,7 +67,7 @@ export default function Home() {
                   <ul>
                     <li>
                       <Link
-                        className="flex flex-row items-center space-x-2 text-slate-900 px-4 py-1 hover:bg-slate-100 rounded-md"
+                        className="flex flex-row items-center space-x-2 text-slate-900 px-4 py-2 hover:bg-slate-100 rounded-md button-focus-visible"
                         href="/"
                       >
                         <Twitter size={16} />
@@ -76,7 +76,7 @@ export default function Home() {
                     </li>
                     <li>
                       <Link
-                        className="flex flex-row items-center space-x-2 text-slate-900 px-4 py-1 hover:bg-slate-100 rounded-md"
+                        className="flex flex-row items-center space-x-2 text-slate-900 px-4 py-2 hover:bg-slate-100 rounded-md button-focus-visible"
                         href="/"
                       >
                         <Icons.discord className="h-4 w-4 fill-black" />
