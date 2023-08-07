@@ -15,10 +15,12 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 import { Icons } from "@/components/icons";
 import { Button } from "@/components/ui/button";
+import { Plus, Globe, Star, Twitter } from "lucide-react";
 
 export default function Home() {
   return (
     <main className="bg-black text-white min-h-screen">
+      {/* Start Navigation */}
       <div className="flex justify-between w-full px-2 py-4">
         <NavigationMenu>
           <NavigationMenuList>
@@ -27,38 +29,64 @@ export default function Home() {
                 <Icons.logo className="h-6 w-6 fill-white stroke-white" />
                 <span>Stardrop</span>
               </NavigationLogoTrigger>
-              <NavigationMenuContent>
-                <ul className="grid gap-3 p-6 min-w-[320px] md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
-                  <li className="row-span-3">
-                    <NavigationMenuLink asChild>
-                      <a
-                        className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md"
+              <NavigationMenuContent className="bg-white min-w-[320px] min-h-max px-2 py-6 rounded-lg flex flex-col space-y-4">
+                <div>
+                  <h3 className="text-slate-400 px-4">Navigation</h3>
+                  <ul>
+                    <li>
+                      <Link
+                        className="flex flex-row items-center space-x-2 text-slate-900 px-4 py-1 hover:bg-slate-100 rounded-md"
                         href="/"
                       >
-                        <Icons.logo className="h-6 w-6" />
-                        <div className="mb-2 mt-4 text-lg font-medium">
-                          shadcn/ui
-                        </div>
-                        <p className="text-sm leading-tight text-muted-foreground">
-                          Beautifully designed components built with Radix UI
-                          and Tailwind CSS.
-                        </p>
-                      </a>
-                    </NavigationMenuLink>
-                  </li>
-                  <ListItem href="/docs" title="Introduction">
-                    Re-usable components built using Radix UI and Tailwind CSS.
-                  </ListItem>
-                  <ListItem href="/docs/installation" title="Installation">
-                    How to install dependencies and structure your app.
-                  </ListItem>
-                  <ListItem
-                    href="/docs/primitives/typography"
-                    title="Typography"
-                  >
-                    Styles for headings, paragraphs, lists...etc
-                  </ListItem>
-                </ul>
+                        <Plus size={16} />
+                        <span>Create Stardrop</span>
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        className="flex flex-row items-center space-x-2 text-slate-900 px-4 py-1 hover:bg-slate-100 rounded-md"
+                        href="/"
+                      >
+                        <Globe size={16} />
+                        <span>Explore Stardrop</span>
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        className="flex flex-row items-center space-x-2 text-slate-900 px-4 py-1 hover:bg-slate-100 rounded-md"
+                        href="/"
+                      >
+                        <Star size={16} />
+                        <span>About</span>
+                      </Link>
+                    </li>
+                  </ul>
+                </div>
+                <div>
+                  <h3 className="text-slate-400 px-4">Community</h3>
+                  <ul>
+                    <li>
+                      <Link
+                        className="flex flex-row items-center space-x-2 text-slate-900 px-4 py-1 hover:bg-slate-100 rounded-md"
+                        href="/"
+                      >
+                        <Twitter size={16} />
+                        <span>Follow Twitter</span>
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        className="flex flex-row items-center space-x-2 text-slate-900 px-4 py-1 hover:bg-slate-100 rounded-md"
+                        href="/"
+                      >
+                        <Icons.discord className="h-4 w-4 fill-black" />
+                        <span>Join Discord</span>
+                      </Link>
+                    </li>
+                    {/* <li>Subscribe Mirror</li>
+                    <li>Join Zealy</li> */}
+                  </ul>
+                </div>
               </NavigationMenuContent>
             </NavigationMenuItem>
           </NavigationMenuList>
@@ -71,6 +99,22 @@ export default function Home() {
           </Link>
         </Button>
       </div>
+      {/* End Navigation */}
+
+      {/* Start hero */}
+      <div className="flex flex-col w-100 mx-6 px-4 py-6 border border-white/20 rounded-xl">
+        <div>
+          <h1 className="text-2xl">
+            Reward your users with NFTs, the easy way
+          </h1>
+          <p>
+            Stardrop is a permissionless platform that allows you to reward
+            others with special NFTs based on their on-chain activity
+          </p>
+        </div>
+        <div>image</div>
+      </div>
+      {/* End hero */}
     </main>
   );
 }
