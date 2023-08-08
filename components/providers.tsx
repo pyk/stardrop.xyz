@@ -1,24 +1,21 @@
 "use client";
 
-// import { EthereumClient } from "@web3modal/ethereum";
-// import { Web3Modal } from "@web3modal/react";
+import { ConnectKitProvider } from "connectkit";
 import * as React from "react";
 import { WagmiConfig } from "wagmi";
 
-import { chains, config, walletConnectProjectId } from "@/lib/wagmi";
-
-// const ethereumClient = new EthereumClient(config, chains);
+import { config } from "@/lib/wagmi";
+import { SiweConfig } from "@/lib/siwe";
+import { SIWEProvider } from "connectkit";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [mounted, setMounted] = React.useState(false);
   React.useEffect(() => setMounted(true), []);
   return (
     <WagmiConfig config={config}>
-      {mounted && children}
-      {/* <Web3Modal
-        projectId={walletConnectProjectId}
-        ethereumClient={ethereumClient}
-      /> */}
+      <SIWEProvider {...SiweConfig}>
+        <ConnectKitProvider>{mounted && children}</ConnectKitProvider>
+      </SIWEProvider>
     </WagmiConfig>
   );
 }

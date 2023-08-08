@@ -1,27 +1,12 @@
-// import { w3mConnectors, w3mProvider } from "@web3modal/ethereum";
-// import { configureChains, createConfig } from "wagmi";
-// import { goerli, mainnet } from "wagmi/chains";
-// import { publicProvider } from "wagmi/chains";
+"use client";
 
-import { createConfig, configureChains, mainnet } from "wagmi";
-import { publicProvider } from "wagmi/providers/public";
+import { createConfig } from "wagmi";
+import { getDefaultConfig } from "connectkit";
 
-export const walletConnectProjectId =
-  process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID!;
-
-const { chains, publicClient, webSocketPublicClient } = configureChains(
-  [mainnet],
-  [publicProvider()]
+export const config = createConfig(
+  getDefaultConfig({
+    // autoConnect: true,
+    appName: "Stardrop",
+    walletConnectProjectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID!,
+  })
 );
-
-export const config = createConfig({
-  autoConnect: true,
-  // connectors: w3mConnectors({
-  //   chains,
-  //   projectId: walletConnectProjectId,
-  // }),
-  publicClient,
-  webSocketPublicClient,
-});
-
-export { chains };
