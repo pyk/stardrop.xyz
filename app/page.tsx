@@ -29,7 +29,7 @@ export default function Home() {
                 <Icons.logo className="h-6 w-6 fill-white stroke-white" />
                 <span>Stardrop</span>
               </NavigationLogoTrigger>
-              <NavigationMenuContent className="bg-white min-w-[320px] min-h-max px-4 py-6 rounded-lg flex flex-col space-y-4">
+              <NavigationMenuContent className="bg-white min-w-[320px] min-h-max px-4 py-6 rounded-xl flex flex-col space-y-4">
                 <div>
                   <h3 className="text-slate-400 px-4">Navigation</h3>
                   <ul>
