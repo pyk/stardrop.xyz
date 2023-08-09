@@ -1,4 +1,5 @@
 import { sealData, unsealData } from "iron-session";
+import { RequestCookies } from "next/dist/compiled/@edge-runtime/cookies";
 import { NextRequest, NextResponse } from "next/server";
 
 const COOKIE_NAME = "stardrop-siwe";
@@ -29,13 +30,17 @@ export class Session {
     this.address = session?.address;
   }
 
-  static async fromRequest(req: NextRequest): Promise<Session> {
-    const sessionCookie = req.cookies.get(COOKIE_NAME)?.value;
+  static async fromCookies(cookies: RequestCookies): Promise<Session> {
+    const sessionCookie = cookies.get(COOKIE_NAME)?.value;
 
     if (!sessionCookie) return new Session();
     return new Session(
       await unsealData<ISession>(sessionCookie, SESSION_OPTIONS)
     );
+  }
+
+  static async fromRequest(req: NextRequest): Promise<Session> {
+    return this.fromCookies(req.cookies);
   }
 
   clear(res: NextResponse): Promise<void> {

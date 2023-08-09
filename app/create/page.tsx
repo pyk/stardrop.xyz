@@ -1,8 +1,14 @@
 import type { Metadata } from "next";
 
-import { ButtonSignIn } from "@/components/button-sign-in";
 import NavigationMenuLogo from "@/components/navigation-menu-logo";
 import { Providers } from "@/components/providers";
+import { CreateForm } from "@/components/create-form";
+import { Icons } from "@/components/icons";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { SignInButton } from "@/components/sign-in-button";
+import { Session } from "@/lib/session";
+import { CreatePage } from "@/components/create-page";
 
 export const metadata: Metadata = {
   title: "Create Stardrop | Stardrop",
@@ -13,15 +19,17 @@ export const metadata: Metadata = {
 export default function Create() {
   return (
     <Providers>
-      <main className="bg-black text-white min-h-screen">
+      <main className="bg-white text-black min-h-screen flex flex-col">
         {/* Start Navigation */}
-        <div className="flex justify-between w-full px-2 py-4">
-          <NavigationMenuLogo />
-          <ButtonSignIn />
+        <div className="flex justify-between w-full px-4 sm:px-6 md:px-7 lg:px-8 py-5">
+          <Link href="/">
+            <Icons.logoBox />
+          </Link>
+          <SignInButton />
         </div>
         {/* End Navigation */}
         {/* Start content */}
-        content here
+        <CreatePage />
         {/* End content */}
       </main>
     </Providers>
