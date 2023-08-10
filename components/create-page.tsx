@@ -4,7 +4,7 @@ import { useSIWE } from "connectkit";
 import { SignInButton } from "@/components/sign-in-button";
 
 import { z } from "zod";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
@@ -29,17 +29,43 @@ import {
 } from "./ui/radio-group";
 import { Icons } from "@/components/icons";
 import { Input } from "./ui/input";
+import { useState } from "react";
+import { AlertTriangle } from "lucide-react";
+import { CreateFormSendETH } from "./create-form-send-eth";
+import { CreateFormReceiveETH } from "./create-form-receive-eth";
+import { CreateFormNoActivity } from "./create-form-no-activity";
+import { CreateFormSendToken } from "./create-form-send-token";
 
-const CreateFormSchema = z.object({
-  actionNetwork: z.enum(["ethereum", "optimism", "zora", "base"], {
+export const CreateFormSchema = z.object({
+  activityNetwork: z.enum(["ethereum", "optimism", "zora", "base"], {
     required_error: "You need to select a network.",
   }),
-  actionType: z.enum(["eth-transfer", "raw-contract-call"]),
+  activity: z.enum(["send-eth", "receive-eth", "send-token", "receive-token"]),
+
+  // Activity:
+  // Send ETH - Recipient address
+  // Receive ETH - Sender address
+  // Send Token - Recipient address
+  // Receive ETH - Sender address
+  activityAddress: z.string(),
+
+  // Activity:
+  // Send ETH - min amount sent to the recipient
+  // Receive ETH - min amount received from the sender
+  activityMinMessageValue: z.number(),
+
+  // Send token and receive token
+  tokenAddress: z.string(),
+
+  activitySendETHMinAmount: z.number(),
+
   actionTargetAddress: z.string(),
   actionSelector: z.string(),
   actionMinValue: z.number().min(0),
   name: z.string().min(2).max(50),
   symbol: z.string().toUpperCase().min(3).max(15),
+
+  transactionHash: z.string(),
 });
 
 export function CreatePage() {
@@ -50,7 +76,10 @@ export function CreatePage() {
     resolver: zodResolver(CreateFormSchema),
   });
 
-  console.log("DEBUG: form", form);
+  const activityNetwork = form.watch("activityNetwork", "ethereum");
+  const activity = form.watch("activity");
+  const activityAddress = form.watch("activityAddress");
+  const activityMinMessageValue = form.watch("activityMinMessageValue");
 
   // 2. Define a submit handler.
   function onSubmit(values: z.infer<typeof CreateFormSchema>) {
@@ -67,28 +96,30 @@ export function CreatePage() {
             className="lg:max-w-3xl mx-auto"
             onSubmit={form.handleSubmit(onSubmit)}
           >
-            {/* Form header */}
+            {/* Start from header */}
             <div className="flex flex-col space-y-2">
               <h1 className="font-bold text-3xl md:text-4xl text-gray-900">
                 Create Stardrop
               </h1>
               <p className="font-medium text-gray-500 text-lg">
-                Reward onchain activity with special NFT
+                Reward onchain activity with NFT
               </p>
             </div>
-            {/* Onchain action group */}
+            {/* End from header */}
+
+            {/* Start onchain activity */}
             <div className="mt-8">
               <h2 className="font-bold text-lg text-gray-900">
-                Onchain action
+                Onchain activity
               </h2>
               <p className="text-gray-500">
-                Specify required onchain action to claim the NFT
+                Specify required onchain acitivity to claim the stardrop
               </p>
             </div>
             {/* Select source chain */}
             <div className="mt-8 max-w-xl">
               <FormField
-                name="actionNetwork"
+                name="activityNetwork"
                 control={form.control}
                 render={({ field }) => (
                   <FormItem>
@@ -98,7 +129,7 @@ export function CreatePage() {
                     <FormControl>
                       <RadioGroup
                         onValueChange={field.onChange}
-                        defaultValue={field.value}
+                        defaultValue={"ethereum"}
                         className="grid grid-cols-3 sm:grid-cols-4 gap-2"
                       >
                         {/* Ethereum */}
@@ -151,127 +182,54 @@ export function CreatePage() {
                 )}
               />
             </div>
-            {/* Select onchain action */}
+            {/* Select onchain activity */}
             <div className="mt-8 max-w-xl">
               <FormField
                 control={form.control}
-                name="actionType"
-                render={({ field }) => {
-                  console.log("DEBUG: choose action field", field);
-                  return (
-                    <>
-                      <FormItem>
-                        <FormLabel className="font-bold text-gray-900 text-base">
-                          Choose action
-                        </FormLabel>
-                        <Select
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                        >
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select onchain action" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="eth-transfer">
-                              ETH Transfer
-                            </SelectItem>
-                            <SelectItem value="raw-contract-call">
-                              Raw Contract Call
-                            </SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                      {/* show additional options for eth-transfer */}
-                      {field.value == "eth-transfer" && (
-                        <>
-                          <FormField
-                            control={form.control}
-                            name="actionTargetAddress"
-                            render={({ field }) => (
-                              <FormItem className="mt-4">
-                                <FormLabel>Recipient address</FormLabel>
-                                <FormControl>
-                                  <Input
-                                    placeholder="0x83B50F33C40795bEDA35FC6AB84CE6F8B013D2e0"
-                                    {...field}
-                                  />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          <FormField
-                            control={form.control}
-                            name="actionMinValue"
-                            render={({ field }) => (
-                              <FormItem className="mt-4">
-                                <FormLabel>
-                                  Min amount{" "}
-                                  <span className="text-gray-500">
-                                    (Optional)
-                                  </span>
-                                </FormLabel>
-                                <FormControl>
-                                  <Input
-                                    type="number"
-                                    min={0}
-                                    placeholder="0"
-                                    {...field}
-                                  />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                        </>
-                      )}
-                      {/* show additional options for raw-contract-call */}
-                      {field.value == "raw-contract-call" && (
-                        <>
-                          <FormField
-                            control={form.control}
-                            name="actionTargetAddress"
-                            render={({ field }) => (
-                              <FormItem className="mt-4">
-                                <FormLabel>Contract address</FormLabel>
-                                <FormControl>
-                                  <Input
-                                    placeholder="0x83B50F33C40795bEDA35FC6AB84CE6F8B013D2e0"
-                                    {...field}
-                                  />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          <FormField
-                            control={form.control}
-                            name="actionSelector"
-                            render={({ field }) => (
-                              <FormItem className="mt-4">
-                                <FormLabel>Function signature</FormLabel>
-                                <FormControl>
-                                  <Input
-                                    placeholder="transfer(address, uint)"
-                                    {...field}
-                                  />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                        </>
-                      )}
-                    </>
-                  );
-                }}
+                name="activity"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="font-bold text-gray-900 text-base">
+                      Choose activity
+                    </FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select activity" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="send-eth">Send ETH</SelectItem>
+                        <SelectItem value="receive-eth">
+                          Receive ETH
+                        </SelectItem>
+                        <SelectItem value="send-token">Send Token</SelectItem>
+                        <SelectItem value="receive-token">
+                          Receive Token
+                        </SelectItem>
+                        <SelectItem value="call-contract">
+                          Call contract
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-            </div>
 
-            {/* Onchain action group */}
+              {activity == null && <CreateFormNoActivity />}
+              {activity == "send-eth" && <CreateFormSendETH form={form} />}
+              {activity == "receive-eth" && (
+                <CreateFormReceiveETH form={form} />
+              )}
+              {activity == "send-token" && <CreateFormSendToken form={form} />}
+            </div>
+            {/* end onchain activity */}
+
+            {/* NFT */}
             <div className="mt-8">
               <h2 className="font-bold text-lg text-gray-900">Reward</h2>
               <p className="text-gray-500">NFT for the eligible users</p>
