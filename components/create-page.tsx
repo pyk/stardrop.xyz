@@ -36,7 +36,8 @@ const CreateFormSchema = z.object({
   }),
   actionType: z.enum(["eth-transfer", "raw-contract-call"]),
   actionTargetAddress: z.string(),
-  actionTargetCallSignature: z.string(),
+  actionSelector: z.string(),
+  actionMinValue: z.number().min(0),
   name: z.string().min(2).max(50),
   symbol: z.string().toUpperCase().min(3).max(15),
 });
@@ -60,7 +61,7 @@ export function CreatePage() {
 
   if (siwe.isSignedIn) {
     return (
-      <div className="px-4 py-4 sm:px-6 md:px-7">
+      <div className="px-4 py-4 sm:px-6 md:px-7 md:py-6 lg:py-9 lg:px-0">
         <Form {...form}>
           <form
             className="lg:max-w-3xl mx-auto"
@@ -169,7 +170,7 @@ export function CreatePage() {
                         >
                           <FormControl>
                             <SelectTrigger>
-                              <SelectValue placeholder="Select onchain action type" />
+                              <SelectValue placeholder="Select onchain action" />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
@@ -202,6 +203,29 @@ export function CreatePage() {
                               </FormItem>
                             )}
                           />
+                          <FormField
+                            control={form.control}
+                            name="actionMinValue"
+                            render={({ field }) => (
+                              <FormItem className="mt-4">
+                                <FormLabel>
+                                  Min amount{" "}
+                                  <span className="text-gray-500">
+                                    (Optional)
+                                  </span>
+                                </FormLabel>
+                                <FormControl>
+                                  <Input
+                                    type="number"
+                                    min={0}
+                                    placeholder="0"
+                                    {...field}
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
                         </>
                       )}
                       {/* show additional options for raw-contract-call */}
@@ -225,7 +249,7 @@ export function CreatePage() {
                           />
                           <FormField
                             control={form.control}
-                            name="actionTargetCallSignature"
+                            name="actionSelector"
                             render={({ field }) => (
                               <FormItem className="mt-4">
                                 <FormLabel>Function signature</FormLabel>
