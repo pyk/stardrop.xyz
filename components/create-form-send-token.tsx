@@ -12,6 +12,9 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useTokenMetadata } from "@/hooks/useTokenMetadata";
+import { isAddress } from "viem";
+import { useEffect } from "react";
 
 export function CreateFormSendToken(props: {
   form: UseFormReturn<z.infer<typeof CreateFormSchema>>;
@@ -20,7 +23,26 @@ export function CreateFormSendToken(props: {
 
   const activityNetwork = form.watch("activityNetwork", "ethereum");
   const activityAddress = form.watch("activityAddress");
-  const activityMinMessageValue = form.watch("activityMinMessageValue");
+
+  const tokenAddress = form.watch("tokenAddress");
+  const tokenMetadata = useTokenMetadata(
+    activityNetwork,
+    isAddress(tokenAddress) ? tokenAddress : null
+  );
+  const tokenSymbol = tokenMetadata.data
+    ? tokenMetadata.data.symbol
+    : "(token symbol)";
+  const tokenMinAmount = form.watch("tokenMinAmount");
+
+  // NOTE: useEffect + dependency to prevent forever loop
+  useEffect(() => {
+    if (tokenMetadata.isError) {
+      form.setError("tokenAddress", {
+        type: "custom",
+        message: "Token not found",
+      });
+    }
+  }, [form, tokenMetadata.isError]);
 
   return (
     <>
@@ -33,7 +55,7 @@ export function CreateFormSendToken(props: {
               <FormLabel>Token address</FormLabel>
               <FormControl>
                 <Input
-                  placeholder="0x83B50F33C40795bEDA35FC6AB84CE6F8B013D2e0"
+                  placeholder="0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
                   {...field}
                 />
               </FormControl>
@@ -59,7 +81,7 @@ export function CreateFormSendToken(props: {
         />
         <FormField
           control={form.control}
-          name="activityMinMessageValue"
+          name="tokenMinAmount"
           render={({ field }) => (
             <FormItem className="mt-4">
               <FormLabel>
@@ -84,7 +106,9 @@ export function CreateFormSendToken(props: {
         <div className="bg-gray-100 overflow-x-scroll px-4 py-5 rounded-xl">
           <p>
             Anyone who has sent at least{" "}
-            <b>{activityMinMessageValue ? activityMinMessageValue : 0} ETH</b>{" "}
+            <b>
+              {tokenMinAmount ? tokenMinAmount : 0} {tokenSymbol}
+            </b>{" "}
             to the <b>{activityNetwork}</b> address{" "}
             <b>{activityAddress ? activityAddress : "(recipient address)"}</b>{" "}
             in one transaction will be eligible to claim the stardrop

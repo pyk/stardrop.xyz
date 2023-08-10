@@ -35,6 +35,7 @@ import { CreateFormSendETH } from "./create-form-send-eth";
 import { CreateFormReceiveETH } from "./create-form-receive-eth";
 import { CreateFormNoActivity } from "./create-form-no-activity";
 import { CreateFormSendToken } from "./create-form-send-token";
+import { isAddress } from "viem";
 
 export const CreateFormSchema = z.object({
   activityNetwork: z.enum(["ethereum", "optimism", "zora", "base"], {
@@ -47,7 +48,9 @@ export const CreateFormSchema = z.object({
   // Receive ETH - Sender address
   // Send Token - Recipient address
   // Receive ETH - Sender address
-  activityAddress: z.string(),
+  activityAddress: z.string().refine((address) => isAddress(address), {
+    message: "Address invalid",
+  }),
 
   // Activity:
   // Send ETH - min amount sent to the recipient
@@ -55,7 +58,11 @@ export const CreateFormSchema = z.object({
   activityMinMessageValue: z.number(),
 
   // Send token and receive token
-  tokenAddress: z.string(),
+  tokenAddress: z.string().refine((address) => isAddress(address), {
+    message: "Address invalid",
+  }),
+
+  tokenMinAmount: z.coerce.number().min(0),
 
   activitySendETHMinAmount: z.number(),
 
@@ -74,12 +81,17 @@ export function CreatePage() {
   // 1. Define your form.
   const form = useForm<z.infer<typeof CreateFormSchema>>({
     resolver: zodResolver(CreateFormSchema),
+    defaultValues: {
+      activityNetwork: "ethereum",
+      // You should avoid providing undefined as a default value, as it
+      // conflicts with the default state of a controlled component.
+      tokenAddress: "",
+      activityAddress: "",
+      tokenMinAmount: 0,
+    },
+    mode: "onChange",
   });
-
-  const activityNetwork = form.watch("activityNetwork", "ethereum");
   const activity = form.watch("activity");
-  const activityAddress = form.watch("activityAddress");
-  const activityMinMessageValue = form.watch("activityMinMessageValue");
 
   // 2. Define a submit handler.
   function onSubmit(values: z.infer<typeof CreateFormSchema>) {
