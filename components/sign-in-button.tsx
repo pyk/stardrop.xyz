@@ -7,13 +7,20 @@ import { Button } from "@/components/ui/button";
 export function SignedAccount(props: {
   show?: () => void;
   address?: `0x${string}`;
+  ensName?: string;
+  truncatedAddress?: string;
 }) {
-  const { show, address } = props;
+  const { show, address, ensName, truncatedAddress } = props;
 
   return (
-    <button onClick={show}>
-      <Avatar address={address} size={40} />
-    </button>
+    <Button
+      variant={"secondary"}
+      className="flex flex-row space-x-2"
+      onClick={show}
+    >
+      <Avatar address={address} size={24} />
+      <span>{ensName ? ensName : truncatedAddress}</span>
+    </Button>
   );
 }
 
@@ -45,6 +52,7 @@ export function SignInButton(props: {
     <ConnectKitButton.Custom>
       {(props) => {
         const { show } = props;
+
         if (props.isConnected) {
           if (siwe.isSignedIn) {
             return <SignedAccount {...props} />;

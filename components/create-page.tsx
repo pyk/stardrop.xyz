@@ -28,13 +28,15 @@ import {
   RadioGroupChainItem,
 } from "./ui/radio-group";
 import { Icons } from "@/components/icons";
+import { Input } from "./ui/input";
 
 const CreateFormSchema = z.object({
-  chainId: z
-    .enum(["1", "2", "3"], {
-      required_error: "You need to select a network.",
-    })
-    .transform((c) => Number(c)),
+  actionNetwork: z.enum(["ethereum", "optimism", "zora", "base"], {
+    required_error: "You need to select a network.",
+  }),
+  actionType: z.enum(["eth-transfer", "raw-contract-call"]),
+  actionTargetAddress: z.string(),
+  actionTargetCallSignature: z.string(),
   name: z.string().min(2).max(50),
   symbol: z.string().toUpperCase().min(3).max(15),
 });
@@ -47,6 +49,8 @@ export function CreatePage() {
     resolver: zodResolver(CreateFormSchema),
   });
 
+  console.log("DEBUG: form", form);
+
   // 2. Define a submit handler.
   function onSubmit(values: z.infer<typeof CreateFormSchema>) {
     // Do something with the form values.
@@ -56,19 +60,21 @@ export function CreatePage() {
 
   if (siwe.isSignedIn) {
     return (
-      <div className="p-4">
+      <div className="px-4 py-4 sm:px-6 md:px-7">
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)}>
+          <form
+            className="lg:max-w-3xl mx-auto"
+            onSubmit={form.handleSubmit(onSubmit)}
+          >
             {/* Form header */}
             <div className="flex flex-col space-y-2">
-              <h1 className="font-bold text-3xl text-gray-900">
+              <h1 className="font-bold text-3xl md:text-4xl text-gray-900">
                 Create Stardrop
               </h1>
               <p className="font-medium text-gray-500 text-lg">
                 Reward onchain activity with special NFT
               </p>
             </div>
-
             {/* Onchain action group */}
             <div className="mt-8">
               <h2 className="font-bold text-lg text-gray-900">
@@ -78,34 +84,36 @@ export function CreatePage() {
                 Specify required onchain action to claim the NFT
               </p>
             </div>
-
             {/* Select source chain */}
-            <div className="mt-8">
+            <div className="mt-8 max-w-xl">
               <FormField
+                name="actionNetwork"
                 control={form.control}
-                name="chainId"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="font-bold text-gray-900">
+                    <FormLabel className="font-bold text-gray-900 text-base">
                       Choose network
                     </FormLabel>
                     <FormControl>
                       <RadioGroup
                         onValueChange={field.onChange}
-                        defaultValue={`${field.value}`}
-                        className="grid grid-cols-3 gap-2"
+                        defaultValue={field.value}
+                        className="grid grid-cols-3 sm:grid-cols-4 gap-2"
                       >
                         {/* Ethereum */}
                         <FormItem className="space-y-0">
                           <FormControl>
-                            <RadioGroupChainItem value="1">
-                              <div className="flex flex-col space-y-2 items-center">
-                                <Icons.ethereum />
+                            <RadioGroupChainItem
+                              value="ethereum"
+                              className="bg-gray-100 hover:bg-black hover:bg-[url('/chain-selected-bg.svg')] hover:bg-cover hover:bg-center rounded-2xl px-4 py-6  data-[state=checked]:bg-black data-[state=checked]:bg-[url('/chain-selected-bg.svg')] data-[state=checked]:bg-cover data-[state=checked]:bg-center min-w-[100px] w-full group/ethereum overflow-hidden"
+                            >
+                              <div className="z-10 flex flex-col space-y-2 items-center">
+                                <Icons.ethereum className="fill-gray-900 group-hover/ethereum:fill-white group-data-[state=checked]/ethereum:fill-white h-16 w-16" />
                                 <div className="flex flex-col space-y-1">
-                                  <h3 className="text-sm font-bold text-gray-900 leading-none">
+                                  <h3 className="text-sm font-bold text-gray-900 group-hover/ethereum:text-white group-data-[state=checked]/ethereum:text-white leading-none">
                                     Ethereum
                                   </h3>
-                                  <p className="text-sm font-medium text-gray-500 leading-none">
+                                  <p className="text-sm font-medium text-gray-400 group-hover/ethereum:text-white/80 group-data-[state=checked]/ethereum:text-white/80 leading-none">
                                     ETH
                                   </p>
                                 </div>
@@ -115,55 +123,20 @@ export function CreatePage() {
                         </FormItem>
 
                         {/* Optimism */}
-                        <FormItem>
+                        <FormItem className="space-y-0">
                           <FormControl>
-                            <RadioGroupChainItem value="op">
-                              <div className="flex flex-col space-y-2 items-center">
-                                <Icons.optimism />
+                            <RadioGroupChainItem
+                              value="optimism"
+                              className="bg-gray-100 hover:bg-black hover:bg-[url('/chain-selected-bg.svg')] hover:bg-cover hover:bg-center rounded-2xl px-4 py-6  data-[state=checked]:bg-black data-[state=checked]:bg-[url('/chain-selected-bg.svg')] data-[state=checked]:bg-cover data-[state=checked]:bg-center min-w-[100px] w-full group/optimism overflow-hidden"
+                            >
+                              <div className="z-10 flex flex-col space-y-2 items-center">
+                                <Icons.optimism className="fill-gray-900 group-hover/optimism:fill-white group-data-[state=checked]/optimism:fill-white h-16 w-16" />
                                 <div className="flex flex-col space-y-1">
-                                  <h3 className="text-sm font-bold text-gray-900 leading-none">
+                                  <h3 className="text-sm font-bold text-gray-900 group-hover/optimism:text-white group-data-[state=checked]/optimism:text-white leading-none">
                                     Optimism
                                   </h3>
-                                  <p className="text-sm font-medium text-gray-500 leading-none">
+                                  <p className="text-sm font-medium text-gray-400 group-hover/optimism:text-white/80 group-data-[state=checked]/optimism:text-white/80 leading-none">
                                     OP
-                                  </p>
-                                </div>
-                              </div>
-                            </RadioGroupChainItem>
-                          </FormControl>
-                        </FormItem>
-
-                        {/* Base */}
-                        <FormItem>
-                          <FormControl>
-                            <RadioGroupChainItem value="base">
-                              <div className="flex flex-col space-y-2 items-center">
-                                <Icons.base />
-                                <div className="flex flex-col space-y-1">
-                                  <h3 className="text-sm font-bold text-gray-900 leading-none">
-                                    Base
-                                  </h3>
-                                  <p className="text-sm font-medium text-gray-500 leading-none">
-                                    BASE
-                                  </p>
-                                </div>
-                              </div>
-                            </RadioGroupChainItem>
-                          </FormControl>
-                        </FormItem>
-
-                        {/* Zora */}
-                        <FormItem>
-                          <FormControl>
-                            <RadioGroupChainItem value="zora">
-                              <div className="flex flex-col space-y-2 items-center">
-                                <Icons.zora />
-                                <div className="flex flex-col space-y-1">
-                                  <h3 className="text-sm font-bold text-gray-900 leading-none">
-                                    ZORA
-                                  </h3>
-                                  <p className="text-sm font-medium text-gray-500 leading-none">
-                                    ZORB
                                   </p>
                                 </div>
                               </div>
@@ -175,6 +148,102 @@ export function CreatePage() {
                     <FormMessage />
                   </FormItem>
                 )}
+              />
+            </div>
+            {/* Select onchain action */}
+            <div className="mt-8 max-w-xl">
+              <FormField
+                control={form.control}
+                name="actionType"
+                render={({ field }) => {
+                  console.log("DEBUG: choose action field", field);
+                  return (
+                    <>
+                      <FormItem>
+                        <FormLabel className="font-bold text-gray-900 text-base">
+                          Choose action
+                        </FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select onchain action type" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="eth-transfer">
+                              ETH Transfer
+                            </SelectItem>
+                            <SelectItem value="raw-contract-call">
+                              Raw Contract Call
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                      {/* show additional options for eth-transfer */}
+                      {field.value == "eth-transfer" && (
+                        <>
+                          <FormField
+                            control={form.control}
+                            name="actionTargetAddress"
+                            render={({ field }) => (
+                              <FormItem className="mt-4">
+                                <FormLabel>Recipient address</FormLabel>
+                                <FormControl>
+                                  <Input
+                                    placeholder="0x83B50F33C40795bEDA35FC6AB84CE6F8B013D2e0"
+                                    {...field}
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </>
+                      )}
+                      {/* show additional options for raw-contract-call */}
+                      {field.value == "raw-contract-call" && (
+                        <>
+                          <FormField
+                            control={form.control}
+                            name="actionTargetAddress"
+                            render={({ field }) => (
+                              <FormItem className="mt-4">
+                                <FormLabel>Contract address</FormLabel>
+                                <FormControl>
+                                  <Input
+                                    placeholder="0x83B50F33C40795bEDA35FC6AB84CE6F8B013D2e0"
+                                    {...field}
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          <FormField
+                            control={form.control}
+                            name="actionTargetCallSignature"
+                            render={({ field }) => (
+                              <FormItem className="mt-4">
+                                <FormLabel>Function signature</FormLabel>
+                                <FormControl>
+                                  <Input
+                                    placeholder="transfer(address, uint)"
+                                    {...field}
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </>
+                      )}
+                    </>
+                  );
+                }}
               />
             </div>
 

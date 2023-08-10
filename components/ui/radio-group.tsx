@@ -49,10 +49,7 @@ const RadioGroupChainItem = React.forwardRef<
   return (
     <RadioGroupPrimitive.Item
       ref={ref}
-      className={cn(
-        "border border-gray-200 rounded-2xl px-4 py-6 data-[state=checked]:bg-gray-100 data-[state=checked]:border-gray-900 min-w-[100px] w-full",
-        className
-      )}
+      className={cn("", className)}
       {...props}
     >
       {children}
