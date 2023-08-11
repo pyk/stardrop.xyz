@@ -68,6 +68,12 @@ export const CreateFormSchema = z.object({
 
   // NFT data
   nftName: z.string().min(2).max(50),
+  nftSymbol: z
+    .string()
+    .min(1)
+    .max(20)
+    .transform((t) => t.toUpperCase()),
+  nftDescription: z.string().max(10000),
 
   tokenMinAmount: z.coerce.number().min(0),
 
@@ -95,6 +101,8 @@ export function CreatePage() {
       tokenMinAmount: 0,
       activityMinMessageValue: 0,
       nftName: "",
+      nftSymbol: "",
+      nftDescription: "",
     },
     mode: "onChange",
   });
@@ -328,14 +336,18 @@ export function CreatePage() {
             <div className="mt-8 max-w-xl">
               <FormField
                 control={form.control}
-                name="nftName"
+                name="nftSymbol"
                 render={({ field }) => (
                   <FormItem className="mt-4">
                     <FormLabel className="font-bold text-gray-900 text-base">
                       Symbol
                     </FormLabel>
                     <FormControl>
-                      <Input placeholder="STARDROP" {...field} />
+                      <Input
+                        className="uppercase"
+                        placeholder="STARDROP"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -348,14 +360,17 @@ export function CreatePage() {
             <div className="mt-8 max-w-xl">
               <FormField
                 control={form.control}
-                name="nftName"
+                name="nftSymbol"
                 render={({ field }) => (
                   <FormItem className="mt-4">
                     <FormLabel className="font-bold text-gray-900 text-base">
                       Description
                     </FormLabel>
                     <FormControl>
-                      <Input placeholder="STARDROP" {...field} />
+                      <Input
+                        placeholder="Onchain Summer is started. Bridge to Base mainnet in order to claim this special NFT."
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
