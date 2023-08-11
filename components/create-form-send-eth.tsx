@@ -51,7 +51,13 @@ export function CreateFormSendETH(props: {
                 <span className="text-gray-500">(Optional)</span>
               </FormLabel>
               <FormControl>
-                <Input type="number" min={0} placeholder="0" {...field} />
+                <Input
+                  type="number"
+                  min={0}
+                  placeholder="0"
+                  step="0.0000001"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>

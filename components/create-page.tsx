@@ -28,7 +28,7 @@ import {
   RadioGroupChainItem,
 } from "./ui/radio-group";
 import { Icons } from "@/components/icons";
-import { Input } from "./ui/input";
+import { Input, InputMedia } from "@/components/ui/input";
 import { useState } from "react";
 import { AlertTriangle } from "lucide-react";
 import { CreateFormSendETH } from "./create-form-send-eth";
@@ -39,12 +39,17 @@ import { isAddress } from "viem";
 import { activityNetworks } from "@/lib/types";
 import { activities, networkActivities } from "@/lib/activity-registry";
 import { Textarea } from "@/components/ui/textarea";
+import { CreateFormMedia } from "./create-form-media";
+import { Button } from "./ui/button";
 
 export const CreateFormSchema = z.object({
   // NFT data
   nftName: z.string().trim().min(1).max(50),
   nftSymbol: z.string().trim().min(1).max(20).toUpperCase(),
   nftDescription: z.string().max(10000),
+  nftMedia: z.instanceof(File).refine((media) => media && media.name != "", {
+    message: "Please provide the media",
+  }),
 
   activityNetwork: z.enum(activityNetworks, {
     required_error: "You need to select a network.",
@@ -58,29 +63,35 @@ export const CreateFormSchema = z.object({
   // Receive ETH - Sender address
   // Send Token - Recipient address
   // Receive ETH - Sender address
-  activityAddress: z.string().refine((address) => isAddress(address), {
-    message: "Address invalid",
-  }),
+  activityAddress: z
+    .string()
+    .refine((address) => isAddress(address), {
+      message: "Address invalid",
+    })
+    .optional(),
 
   // Activity:
   // Send ETH - min amount sent to the recipient
   // Receive ETH - min amount received from the sender
-  activityMinMessageValue: z.coerce.number().min(0),
+  activityMinMessageValue: z.coerce.number().min(0).optional(),
 
   // Send token and receive token
-  tokenAddress: z.string().refine((address) => isAddress(address), {
-    message: "Address invalid",
-  }),
+  tokenAddress: z
+    .string()
+    .refine((address) => isAddress(address), {
+      message: "Address invalid",
+    })
+    .optional(),
 
-  tokenMinAmount: z.coerce.number().min(0),
+  tokenMinAmount: z.coerce.number().min(0).optional(),
 
-  actionTargetAddress: z.string(),
-  actionSelector: z.string(),
-  actionMinValue: z.number().min(0),
-  name: z.string().min(2).max(50),
-  symbol: z.string().toUpperCase().min(3).max(15),
+  // actionTargetAddress: z.string(),
+  // actionSelector: z.string(),
+  // actionMinValue: z.number().min(0),
+  // name: z.string().min(2).max(50),
+  // symbol: z.string().toUpperCase().min(3).max(15),
 
-  transactionHash: z.string(),
+  // transactionHash: z.string(),
 });
 
 export function CreatePage() {
@@ -90,6 +101,11 @@ export function CreatePage() {
   const form = useForm<z.infer<typeof CreateFormSchema>>({
     resolver: zodResolver(CreateFormSchema),
     defaultValues: {
+      nftName: "",
+      nftSymbol: "",
+      nftDescription: "",
+      nftMedia: new File([], ""),
+
       activityNetwork: "ethereum",
       // You should avoid providing undefined as a default value, as it
       // conflicts with the default state of a controlled component.
@@ -97,9 +113,6 @@ export function CreatePage() {
       activityAddress: "",
       tokenMinAmount: 0,
       activityMinMessageValue: 0,
-      nftName: "",
-      nftSymbol: "",
-      nftDescription: "",
     },
     mode: "onChange",
   });
@@ -108,6 +121,7 @@ export function CreatePage() {
 
   // 2. Define a submit handler.
   function onSubmit(values: z.infer<typeof CreateFormSchema>) {
+    console.log("HELLLLOOOO");
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
     console.log(values);
@@ -202,25 +216,7 @@ export function CreatePage() {
 
             {/* Start Media */}
             <div className="mt-8 max-w-xl">
-              <FormField
-                control={form.control}
-                name="nftDescription"
-                render={({ field }) => (
-                  <FormItem className="mt-4">
-                    <FormLabel className="font-bold text-gray-900 text-base">
-                      Upload media
-                    </FormLabel>
-                    <FormControl>
-                      <Textarea
-                        placeholder="Onchain Summer is started. Bridge to Base mainnet in order to claim this special NFT."
-                        className="resize-none"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              <CreateFormMedia form={form} />
             </div>
             {/* End Media */}
 
@@ -394,12 +390,13 @@ export function CreatePage() {
             </div>
             {/* end onchain activity */}
 
-            {/* Start NFT */}
-            <div className="mt-8">
-              <h2 className="font-bold text-lg text-gray-900">Reward</h2>
-              <p className="text-gray-500">Special NFT for eligible user</p>
+            {/* Start Create Button */}
+            <div className="mt-8 max-w-xl">
+              <Button type="submit" className="w-full" size="lg">
+                Create Stardrop
+              </Button>
             </div>
-            {/* End NFT */}
+            {/* End Create Button */}
           </form>
         </Form>
       </div>
