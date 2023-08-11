@@ -38,8 +38,14 @@ import { CreateFormSendToken } from "./create-form-send-token";
 import { isAddress } from "viem";
 import { activityNetworks } from "@/lib/types";
 import { activities, networkActivities } from "@/lib/activity-registry";
+import { Textarea } from "@/components/ui/textarea";
 
 export const CreateFormSchema = z.object({
+  // NFT data
+  nftName: z.string().trim().min(1).max(50),
+  nftSymbol: z.string().trim().min(1).max(20).toUpperCase(),
+  nftDescription: z.string().max(10000),
+
   activityNetwork: z.enum(activityNetworks, {
     required_error: "You need to select a network.",
   }),
@@ -65,15 +71,6 @@ export const CreateFormSchema = z.object({
   tokenAddress: z.string().refine((address) => isAddress(address), {
     message: "Address invalid",
   }),
-
-  // NFT data
-  nftName: z.string().min(2).max(50),
-  nftSymbol: z
-    .string()
-    .min(1)
-    .max(20)
-    .transform((t) => t.toUpperCase()),
-  nftDescription: z.string().max(10000),
 
   tokenMinAmount: z.coerce.number().min(0),
 
@@ -134,6 +131,98 @@ export function CreatePage() {
               </p>
             </div>
             {/* End from header */}
+
+            {/* Start Name */}
+            <div className="mt-8 max-w-xl">
+              <FormField
+                control={form.control}
+                name="nftName"
+                render={({ field }) => (
+                  <FormItem className="mt-4">
+                    <FormLabel className="font-bold text-gray-900 text-base">
+                      Name
+                    </FormLabel>
+                    <FormControl>
+                      <Input placeholder="Welcome to Base" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            {/* End Name */}
+
+            {/* Start Symbol */}
+            <div className="mt-8 max-w-xl">
+              <FormField
+                control={form.control}
+                name="nftSymbol"
+                render={({ field }) => (
+                  <FormItem className="mt-4">
+                    <FormLabel className="font-bold text-gray-900 text-base">
+                      Symbol
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        className="uppercase"
+                        placeholder="STARDROP"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            {/* End Symbol */}
+
+            {/* Start Description */}
+            <div className="mt-8 max-w-xl">
+              <FormField
+                control={form.control}
+                name="nftDescription"
+                render={({ field }) => (
+                  <FormItem className="mt-4">
+                    <FormLabel className="font-bold text-gray-900 text-base">
+                      Description
+                    </FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Onchain Summer is started. Bridge to Base mainnet in order to claim this special NFT."
+                        className="resize-none"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            {/* End Description */}
+
+            {/* Start Media */}
+            <div className="mt-8 max-w-xl">
+              <FormField
+                control={form.control}
+                name="nftDescription"
+                render={({ field }) => (
+                  <FormItem className="mt-4">
+                    <FormLabel className="font-bold text-gray-900 text-base">
+                      Upload media
+                    </FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Onchain Summer is started. Bridge to Base mainnet in order to claim this special NFT."
+                        className="resize-none"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            {/* End Media */}
 
             {/* Start onchain activity */}
             <div className="mt-8">
@@ -311,73 +400,6 @@ export function CreatePage() {
               <p className="text-gray-500">Special NFT for eligible user</p>
             </div>
             {/* End NFT */}
-
-            {/* Start Name */}
-            <div className="mt-8 max-w-xl">
-              <FormField
-                control={form.control}
-                name="nftName"
-                render={({ field }) => (
-                  <FormItem className="mt-4">
-                    <FormLabel className="font-bold text-gray-900 text-base">
-                      Name
-                    </FormLabel>
-                    <FormControl>
-                      <Input placeholder="Welcome to Base" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            {/* End Name */}
-
-            {/* Start Symbol */}
-            <div className="mt-8 max-w-xl">
-              <FormField
-                control={form.control}
-                name="nftSymbol"
-                render={({ field }) => (
-                  <FormItem className="mt-4">
-                    <FormLabel className="font-bold text-gray-900 text-base">
-                      Symbol
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        className="uppercase"
-                        placeholder="STARDROP"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            {/* End Symbol */}
-
-            {/* Start Symbol */}
-            <div className="mt-8 max-w-xl">
-              <FormField
-                control={form.control}
-                name="nftSymbol"
-                render={({ field }) => (
-                  <FormItem className="mt-4">
-                    <FormLabel className="font-bold text-gray-900 text-base">
-                      Description
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Onchain Summer is started. Bridge to Base mainnet in order to claim this special NFT."
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            {/* End Symbol */}
           </form>
         </Form>
       </div>
