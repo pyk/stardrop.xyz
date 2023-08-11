@@ -36,12 +36,16 @@ import { CreateFormReceiveETH } from "./create-form-receive-eth";
 import { CreateFormNoActivity } from "./create-form-no-activity";
 import { CreateFormSendToken } from "./create-form-send-token";
 import { isAddress } from "viem";
+import { activityNetworks } from "@/lib/types";
+import { activities, networkActivities } from "@/lib/activity-registry";
 
 export const CreateFormSchema = z.object({
-  activityNetwork: z.enum(["ethereum", "optimism", "zora", "base"], {
+  activityNetwork: z.enum(activityNetworks, {
     required_error: "You need to select a network.",
   }),
-  activity: z.enum(["send-eth", "receive-eth", "send-token", "receive-token"]),
+  activity: z.enum(activities, {
+    required_error: "You need to select onchain activity.",
+  }),
 
   // Activity:
   // Send ETH - Recipient address
@@ -55,16 +59,17 @@ export const CreateFormSchema = z.object({
   // Activity:
   // Send ETH - min amount sent to the recipient
   // Receive ETH - min amount received from the sender
-  activityMinMessageValue: z.number(),
+  activityMinMessageValue: z.coerce.number().min(0),
 
   // Send token and receive token
   tokenAddress: z.string().refine((address) => isAddress(address), {
     message: "Address invalid",
   }),
 
-  tokenMinAmount: z.coerce.number().min(0),
+  // NFT data
+  nftName: z.string().min(2).max(50),
 
-  activitySendETHMinAmount: z.number(),
+  tokenMinAmount: z.coerce.number().min(0),
 
   actionTargetAddress: z.string(),
   actionSelector: z.string(),
@@ -88,9 +93,12 @@ export function CreatePage() {
       tokenAddress: "",
       activityAddress: "",
       tokenMinAmount: 0,
+      activityMinMessageValue: 0,
+      nftName: "",
     },
     mode: "onChange",
   });
+  const activityNetwork = form.watch("activityNetwork");
   const activity = form.watch("activity");
 
   // 2. Define a submit handler.
@@ -128,6 +136,8 @@ export function CreatePage() {
                 Specify required onchain acitivity to claim the stardrop
               </p>
             </div>
+            {/* End onchain activity */}
+
             {/* Select source chain */}
             <div className="mt-8 max-w-xl">
               <FormField
@@ -144,7 +154,7 @@ export function CreatePage() {
                         defaultValue={"ethereum"}
                         className="grid grid-cols-3 sm:grid-cols-4 gap-2"
                       >
-                        {/* Ethereum */}
+                        {/* Start Ethereum */}
                         <FormItem className="space-y-0">
                           <FormControl>
                             <RadioGroupChainItem
@@ -165,8 +175,9 @@ export function CreatePage() {
                             </RadioGroupChainItem>
                           </FormControl>
                         </FormItem>
+                        {/* End Ethereum */}
 
-                        {/* Optimism */}
+                        {/* Start Optimism */}
                         <FormItem className="space-y-0">
                           <FormControl>
                             <RadioGroupChainItem
@@ -187,6 +198,53 @@ export function CreatePage() {
                             </RadioGroupChainItem>
                           </FormControl>
                         </FormItem>
+                        {/* End Optimism */}
+
+                        {/* Start Base */}
+                        <FormItem className="space-y-0">
+                          <FormControl>
+                            <RadioGroupChainItem
+                              value="base"
+                              className="bg-gray-100 hover:bg-black hover:bg-[url('/chain-selected-bg.svg')] hover:bg-cover hover:bg-center rounded-2xl px-4 py-6  data-[state=checked]:bg-black data-[state=checked]:bg-[url('/chain-selected-bg.svg')] data-[state=checked]:bg-cover data-[state=checked]:bg-center min-w-[100px] w-full group/base overflow-hidden"
+                            >
+                              <div className="z-10 flex flex-col space-y-2 items-center">
+                                <Icons.base className="fill-gray-900 group-hover/base:fill-white group-data-[state=checked]/base:fill-white h-16 w-16" />
+                                <div className="flex flex-col space-y-1">
+                                  <h3 className="text-sm font-bold text-gray-900 group-hover/base:text-white group-data-[state=checked]/base:text-white leading-none">
+                                    Base
+                                  </h3>
+                                  <p className="text-sm font-medium text-gray-400 group-hover/base:text-white/80 group-data-[state=checked]/base:text-white/80 leading-none">
+                                    BASE
+                                  </p>
+                                </div>
+                              </div>
+                            </RadioGroupChainItem>
+                          </FormControl>
+                        </FormItem>
+                        {/* End Base */}
+
+                        {/* Start Zora */}
+                        <FormItem className="space-y-0">
+                          <FormControl>
+                            <RadioGroupChainItem
+                              value="zora"
+                              className="bg-gray-100 hover:bg-black hover:bg-[url('/chain-selected-bg.svg')] hover:bg-cover hover:bg-center rounded-2xl px-4 py-6  data-[state=checked]:bg-black data-[state=checked]:bg-[url('/chain-selected-bg.svg')] data-[state=checked]:bg-cover data-[state=checked]:bg-center min-w-[100px] w-full group/zora overflow-hidden"
+                            >
+                              <div className="z-10 flex flex-col space-y-2 items-center">
+                                <Icons.zora className="fill-gray-900 group-hover/zora:fill-white group-data-[state=checked]/zora:fill-white h-16 w-16" />
+                                <div className="flex flex-col space-y-1">
+                                  <h3 className="text-sm font-bold text-gray-900 group-hover/zora:text-white group-data-[state=checked]/zora:text-white leading-none">
+                                    Zora
+                                  </h3>
+                                  <p className="text-sm font-medium text-gray-400 group-hover/zora:text-white/80 group-data-[state=checked]/zora:text-white/80 leading-none">
+                                    ZORA
+                                  </p>
+                                </div>
+                              </div>
+                            </RadioGroupChainItem>
+                          </FormControl>
+                        </FormItem>
+                        {/* End Base */}
                       </RadioGroup>
                     </FormControl>
                     <FormMessage />
@@ -214,17 +272,15 @@ export function CreatePage() {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="send-eth">Send ETH</SelectItem>
-                        <SelectItem value="receive-eth">
-                          Receive ETH
-                        </SelectItem>
-                        <SelectItem value="send-token">Send Token</SelectItem>
-                        <SelectItem value="receive-token">
-                          Receive Token
-                        </SelectItem>
-                        <SelectItem value="call-contract">
-                          Call contract
-                        </SelectItem>
+                        {/* Show supported activity in selected network */}
+                        {networkActivities[activityNetwork].map((activity) => (
+                          <SelectItem
+                            key={activity.value}
+                            value={activity.value}
+                          >
+                            {activity.title}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -241,11 +297,72 @@ export function CreatePage() {
             </div>
             {/* end onchain activity */}
 
-            {/* NFT */}
+            {/* Start NFT */}
             <div className="mt-8">
               <h2 className="font-bold text-lg text-gray-900">Reward</h2>
-              <p className="text-gray-500">NFT for the eligible users</p>
+              <p className="text-gray-500">Special NFT for eligible user</p>
             </div>
+            {/* End NFT */}
+
+            {/* Start Name */}
+            <div className="mt-8 max-w-xl">
+              <FormField
+                control={form.control}
+                name="nftName"
+                render={({ field }) => (
+                  <FormItem className="mt-4">
+                    <FormLabel className="font-bold text-gray-900 text-base">
+                      Name
+                    </FormLabel>
+                    <FormControl>
+                      <Input placeholder="Welcome to Base" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            {/* End Name */}
+
+            {/* Start Symbol */}
+            <div className="mt-8 max-w-xl">
+              <FormField
+                control={form.control}
+                name="nftName"
+                render={({ field }) => (
+                  <FormItem className="mt-4">
+                    <FormLabel className="font-bold text-gray-900 text-base">
+                      Symbol
+                    </FormLabel>
+                    <FormControl>
+                      <Input placeholder="STARDROP" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            {/* End Symbol */}
+
+            {/* Start Symbol */}
+            <div className="mt-8 max-w-xl">
+              <FormField
+                control={form.control}
+                name="nftName"
+                render={({ field }) => (
+                  <FormItem className="mt-4">
+                    <FormLabel className="font-bold text-gray-900 text-base">
+                      Description
+                    </FormLabel>
+                    <FormControl>
+                      <Input placeholder="STARDROP" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            {/* End Symbol */}
           </form>
         </Form>
       </div>
