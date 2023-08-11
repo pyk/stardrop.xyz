@@ -81,7 +81,7 @@ export const CreateFormSchema = z.object({
     .refine((address) => isAddress(address), {
       message: "Address invalid",
     })
-    .optional(),
+    .nullable(),
 
   tokenMinAmount: z.coerce.number().min(0).optional(),
 
@@ -109,7 +109,7 @@ export function CreatePage() {
       activityNetwork: "ethereum",
       // You should avoid providing undefined as a default value, as it
       // conflicts with the default state of a controlled component.
-      tokenAddress: "",
+      tokenAddress: null,
       activityAddress: "",
       tokenMinAmount: 0,
       activityMinMessageValue: 0,
@@ -119,12 +119,33 @@ export function CreatePage() {
   const activityNetwork = form.watch("activityNetwork");
   const activity = form.watch("activity");
 
+  const [isCreating, setIsCreating] = useState<boolean>(false);
+
   // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof CreateFormSchema>) {
+  async function onSubmit(values: z.infer<typeof CreateFormSchema>) {
     console.log("HELLLLOOOO");
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
     console.log(values);
+
+    setIsCreating(true);
+
+    const formData = new FormData();
+    formData.set("nftMedia", values["nftMedia"]);
+
+    try {
+      const res = await fetch("/stardrop", {
+        method: "POST",
+        body: formData,
+      });
+      const resJson = await res.json();
+
+      console.log("DEBUG: resJson", resJson);
+      setIsCreating(false);
+    } catch (err) {
+      setIsCreating(false);
+      console.error(err);
+    }
   }
 
   if (siwe.isSignedIn) {
@@ -392,11 +413,27 @@ export function CreatePage() {
 
             {/* Start Create Button */}
             <div className="mt-8 max-w-xl">
-              <Button type="submit" className="w-full" size="lg">
-                Create Stardrop
-              </Button>
+              {!isCreating && (
+                <Button type="submit" className="w-full" size="lg">
+                  Create Stardrop
+                </Button>
+              )}
+              {isCreating && (
+                <Button
+                  type="submit"
+                  disabled={true}
+                  className="w-full cursor-wait"
+                  size="lg"
+                >
+                  <Icons.spinner className="animate-spin h-5 w-5 mr-2" />
+                  <span>Create Stardrop</span>
+                </Button>
+              )}
             </div>
             {/* End Create Button */}
+
+            {/* Start submission status */}
+            {/* End submission status */}
           </form>
         </Form>
       </div>
