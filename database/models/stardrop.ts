@@ -1,6 +1,7 @@
 import { pgTable, text, serial, jsonb } from "drizzle-orm/pg-core";
 import { InferModel } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
+import { isAddress } from "viem";
 
 export const StardropTable = pgTable("stardrops", {
   id: serial("id").primaryKey(),
@@ -11,6 +12,7 @@ export const StardropTable = pgTable("stardrops", {
   activityType: text("activity_type"),
   activityNetwork: text("activity_network"),
   activityData: jsonb("activity_data"),
+  creator: text("created_by"),
 });
 
 export type Stardrop = InferModel<typeof StardropTable>;
@@ -29,4 +31,8 @@ export const NewStardropValidator = createInsertSchema(StardropTable, {
       (network) => ["ethereum"].includes(network),
       { message: "Unknown activity network" }
     ),
+  creator: (schema) =>
+    schema.creator.toLowerCase().refine((address) => isAddress(address), {
+      message: "Invalid creator address",
+    }),
 });
