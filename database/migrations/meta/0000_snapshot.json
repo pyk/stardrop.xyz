@@ -1,0 +1,73 @@
+{
+  "version": "5",
+  "dialect": "pg",
+  "id": "2d8b2c14-554b-4707-9f0c-1636c3fc6373",
+  "prevId": "00000000-0000-0000-0000-000000000000",
+  "tables": {
+    "stardrops": {
+      "name": "stardrops",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "symbol": {
+          "name": "symbol",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "media_cid": {
+          "name": "media_cid",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "activity_type": {
+          "name": "activity_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "activity_network": {
+          "name": "activity_network",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "activity_data": {
+          "name": "activity_data",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    }
+  },
+  "enums": {},
+  "schemas": {},
+  "_meta": {
+    "schemas": {},
+    "tables": {},
+    "columns": {}
+  }
+}

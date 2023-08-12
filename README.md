@@ -44,3 +44,31 @@ from the creators of Next.js.
 Check out our
 [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more
 details.
+
+## Database migrations
+
+Run the following command to generate the migration:
+
+```sh
+pnpm db:gen
+```
+
+This command will read all files in `database/schema/*.ts` then generate the
+migration.
+
+You can generate custom migration by running the following command:
+
+```sh
+pnpm db:gen --custom
+```
+
+After the migrations file is generated, double check the generated migration
+then you can run the following command to sync the database:
+
+```sh
+pnpm db:sync:dev
+pnpm db:sync:prod
+```
+
+> [!NOTE] Make sure you have created `.env.dev` and `.env.prod` and define the
+> `DATABASE_URL`

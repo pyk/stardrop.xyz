@@ -7,7 +7,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint && prettier --check .",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "db:gen": "drizzle-kit generate:pg --out database/migrations --schema database/models",
+    "db:sync:dev": "tsx database/sync.ts",
+    "db:sync:prod": "NODE_ENV=production tsx database/sync.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "3.2.0",
@@ -21,10 +24,14 @@
     "clsx": "2.0.0",
     "connectkit": "1.5.0",
     "connectkit-next-siwe": "0.2.0",
+    "dotenv": "16.3.1",
+    "drizzle-orm": "0.28.2",
+    "drizzle-zod": "0.5.0",
     "iron-session": "6.3.1",
     "lucide-react": "0.263.1",
     "next": "13.4.13-canary.16",
     "postcss": "8.4.27",
+    "postgres": "3.3.5",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-hook-form": "7.45.4",
@@ -41,9 +48,11 @@
     "@types/node": "20.4.8",
     "@types/react": "18.2.18",
     "@types/react-dom": "18.2.7",
+    "drizzle-kit": "0.19.12",
     "eslint": "8.46.0",
     "eslint-config-next": "13.4.12",
     "prettier": "3.0.1",
+    "tsx": "3.12.7",
     "typescript": "5.1.6"
   }
 }
