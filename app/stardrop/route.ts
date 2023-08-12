@@ -1,9 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
+
 import { Session } from "@/lib/session";
+import { createStardrop } from "@/database/actions/stardrop";
 
 if (!process.env.NFT_STORAGE_API_KEY) {
   throw new Error(`NFT_STORAGE_API_KEY is undefined`);
 }
+
+const NFTStorageUploadSchema = z.object({
+  value: z.object({
+    cid: z.string(),
+  }),
+});
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
   // Make sure user is signed in
@@ -13,31 +22,54 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   }
 
   // Extract form data
-  // lets focus on uploading file to nft.storage first
   const formData = await req.formData();
-  console.log("DEBUG: data", formData);
-  const nftMedia: File | null = formData.get("nftMedia") as unknown as File;
-  if (!nftMedia) {
+
+  // Upload media to nft.storage first
+  const media: File | null = formData.get("media") as unknown as File;
+  if (!media) {
     return NextResponse.json(
-      { message: "NFT Media not found" },
+      { message: "Stardrop media not found" },
       { status: 400 }
     );
   }
+  let mediaCid = null;
+  try {
+    const nftStorageRes = await fetch("https://api.nft.storage/upload", {
+      method: "POST",
+      body: media,
+      headers: {
+        Authorization: `Bearer ${process.env.NFT_STORAGE_API_KEY}`,
+        "Content-Type": "*/*",
+      },
+    });
+    const nftStorageResJson = await nftStorageRes.json();
+    const data = NFTStorageUploadSchema.parse(nftStorageResJson);
+    mediaCid = data.value.cid;
+  } catch (err) {
+    console.log(err);
+    return NextResponse.json(
+      { message: "Failed to upload the media to ipfs" },
+      { status: 500 }
+    );
+  }
 
-  // Upload to nft.storage
-  const nftStorageData = new FormData();
-  nftStorageData.set("file", nftMedia);
-  const nftStorageRes = await fetch("https://api.nft.storage/upload", {
-    method: "POST",
-    body: nftMedia,
-    headers: {
-      Authorization: `Bearer ${process.env.NFT_STORAGE_API_KEY}`,
-      "Content-Type": "*/*",
-    },
-  });
-  console.log("DEBUG: nftStorageRes", nftStorageRes);
-  const nftStorageResJson = await nftStorageRes.json();
-  console.log("DEBUG: nftStorageResJson", nftStorageResJson);
+  try {
+    const newStardrop = await createStardrop({
+      name: formData.get("name") as string,
+      symbol: formData.get("symbol") as string,
+      description: formData.get("description") as string,
+      mediaCid,
+      activityType: formData.get("activityType") as string,
+      activityNetwork: formData.get("activityNetwork") as string,
+      activityData: formData.get("activityData") as string,
+    });
 
-  return NextResponse.json({ message: "ok" });
+    return NextResponse.json(newStardrop);
+  } catch (err) {
+    console.log(err);
+    return NextResponse.json(
+      { message: "Failed to insert new stardrop" },
+      { status: 500 }
+    );
+  }
 }

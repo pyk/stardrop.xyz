@@ -25,28 +25,23 @@ export function SignedAccount(props: {
 }
 
 export function SignIn(props: {
-  variant: "secondary";
-  size: "sm" | "lg";
+  size: "sm" | "lg" | "jumbo";
   show?: () => void;
   signIn?: () => void;
 }) {
-  const { variant, size, show, signIn } = props;
+  const { size, show, signIn } = props;
   return (
-    <Button variant={variant} size={size} onClick={signIn ? signIn : show}>
+    <Button size={size} variant={"secondary"} onClick={signIn ? signIn : show}>
       <div className="flex flex-row space-x-1 items-center">
         <span>Sign In</span>
-        <ChevronRight className="ml-2 opacity-30 h-4 w-4" />
       </div>
     </Button>
   );
 }
 
-export function SignInButton(props: {
-  variant?: "secondary";
-  size?: "sm" | "lg";
-}) {
+export function SignInButton(props: { size?: "sm" | "lg" | "jumbo" }) {
   const siwe = useSIWE();
-  const { variant, size } = props;
+  const { size } = props;
 
   return (
     <ConnectKitButton.Custom>
@@ -57,22 +52,10 @@ export function SignInButton(props: {
           if (siwe.isSignedIn) {
             return <SignedAccount {...props} />;
           } else {
-            return (
-              <SignIn
-                variant={variant ? variant : "secondary"}
-                size={size ? size : "sm"}
-                signIn={siwe.signIn}
-              />
-            );
+            return <SignIn size={size ? size : "sm"} signIn={siwe.signIn} />;
           }
         } else {
-          return (
-            <SignIn
-              variant={variant ? variant : "secondary"}
-              size={size ? size : "sm"}
-              show={show}
-            />
-          );
+          return <SignIn size={size ? size : "sm"} show={show} />;
         }
       }}
     </ConnectKitButton.Custom>

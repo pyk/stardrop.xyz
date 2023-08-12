@@ -12,13 +12,7 @@ export const Icons = {
     </svg>
   ),
   logoBox: (props: IconProps) => (
-    <svg
-      width="40"
-      height="40"
-      viewBox="0 0 40 40"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" {...props}>
       <rect width="40" height="40" rx="10" fill="black" />
       <path
         fillRule="evenodd"

@@ -34,4 +34,5 @@ export const SiweConfig = {
     return address && chainId ? { address, chainId } : null;
   },
   signOut: () => fetch(`/siwe`, { method: "DELETE" }).then((res) => res.ok),
+  signOutOnNetworkChange: false,
 } satisfies SIWEConfig;

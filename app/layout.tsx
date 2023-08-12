@@ -4,8 +4,7 @@ import { inter } from "@/lib/font";
 
 export const metadata: Metadata = {
   title: "Stardrop",
-  description: `Stardrop is a permissionless platform that allows you to reward
-  others with special NFTs based on their on-chain activity`,
+  description: `Stardrop is a permissionless protocol to reward onchain activity with NFT. Powered by Zora`,
 };
 
 export default function RootLayout({
