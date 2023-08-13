@@ -18,14 +18,14 @@ export function CreateFormMedia(props: {
   form: UseFormReturn<z.infer<typeof CreateFormSchema>>;
 }) {
   const { form } = props;
-  const media = form.watch("nftMedia");
+  const media = form.watch("media");
   if (media && media.name != "") {
     const sourceMedia = URL.createObjectURL(media);
 
     return (
       <FormField
         control={form.control}
-        name="nftMedia"
+        name="media"
         render={({ field }) => (
           <FormItem>
             <FormControl>
@@ -67,7 +67,7 @@ export function CreateFormMedia(props: {
   return (
     <FormField
       control={form.control}
-      name="nftMedia"
+      name="media"
       render={({ field }) => (
         <FormItem>
           <FormControl>
@@ -110,53 +110,4 @@ export function CreateFormMedia(props: {
       )}
     />
   );
-
-  // if (media) {
-  //   const sourceMedia = URL.createObjectURL(media);
-  //   console.log("DEBUG: sourceMedia", sourceMedia);
-  //   return (
-  //     <FormField
-  //       control={form.control}
-  //       name="nftMedia"
-  //       render={({ field }) => (
-  //         <FormItem className="mt-4">
-  //           <FormLabel className="font-bold text-gray-900 text-base">
-  //             Media
-  //           </FormLabel>
-  //           <FormControl>
-  //             <div className="flex flex-col items-center">
-  //               <div className="relative w-full aspect-square ring-2 ring-gray-100 rounded-xl">
-  //                 <Image
-  //                   src={sourceMedia}
-  //                   fill={true}
-  //                   alt="preview"
-  //                   className="rounded-xl object-contain"
-  //                 />
-  //               </div>
-  //               <label
-  //                 htmlFor="replace-media"
-  //                 className="h-4 bg-red-500 cursor-pointer"
-  //               >
-  //                 <p>update media</p>
-
-  //                 {/* @ts-expect-error */}
-  //                 <input
-  //                   id="replace-media"
-  //                   type="file"
-  //                   accept=".jpg, .jpeg, .png, .svg, .gif, .mp4"
-  //                   className="hidden"
-  //                   {...field}
-  //                   onChange={(e) =>
-  //                     field.onChange(e.target.files ? e.target.files[0] : "")
-  //                   }
-  //                 />
-  //               </label>
-  //             </div>
-  //           </FormControl>
-  //           <FormMessage />
-  //         </FormItem>
-  //       )}
-  //     />
-  //   );
-  // }
 }

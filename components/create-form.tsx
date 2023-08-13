@@ -4,7 +4,7 @@ import { useSIWE } from "connectkit";
 import { SignInButton } from "@/components/sign-in-button";
 
 import { z } from "zod";
-import { useForm, useWatch } from "react-hook-form";
+import { FieldErrors, useForm, useFormState, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
@@ -77,18 +77,6 @@ export const CreateFormSchema = z.object({
   publishOnZora: z.boolean(),
 
   // Activity:
-  // Send ETH - Recipient address
-  // Receive ETH - Sender address
-  // Send Token - Recipient address
-  // Receive ETH - Sender address
-  activityAddress: z
-    .string()
-    .refine((address) => isAddress(address), {
-      message: "Address invalid",
-    })
-    .optional(),
-
-  // Activity:
   // Send ETH - min amount sent to the recipient
   // Receive ETH - min amount received from the sender
   activityMinMessageValue: z.coerce.number().min(0).optional(),
@@ -105,13 +93,14 @@ export const CreateFormSchema = z.object({
 });
 
 export function CreateForm() {
-  const account = useAccount();
-  const siwe = useSIWE();
+  const { isConnected } = useAccount();
+  const { isSignedIn } = useSIWE();
 
   // 1. Define your form.
   const form = useForm<z.infer<typeof CreateFormSchema>>({
     resolver: zodResolver(CreateFormSchema),
     defaultValues: {
+      // NFT metadata
       name: "",
       symbol: "",
       description: "",
@@ -121,9 +110,17 @@ export function CreateForm() {
       // You should avoid providing undefined as a default value, as it
       // conflicts with the default state of a controlled component.
       tokenAddress: null,
-      activityAddress: "",
       tokenMinAmount: 0,
       activityMinMessageValue: 0,
+
+      // Send ETH
+      sendETHMinAmount: 0,
+      sendETHRecipient: "",
+
+      // Publish
+      publishOnOptimism: false,
+      publishOnBase: false,
+      publishOnZora: false,
     },
     mode: "onChange",
   });
@@ -138,33 +135,42 @@ export function CreateForm() {
     // ✅ This will be type-safe and validated.
     console.log(values);
 
+    // Open dialog
     setIsCreating(true);
 
-    const formData = new FormData();
-    formData.set("media", values["media"]);
+    // const formData = new FormData();
+    // formData.set("media", values["media"]);
 
-    try {
-      const res = await fetch("/stardrop", {
-        method: "POST",
-        body: formData,
-      });
-      const resJson = await res.json();
+    // try {
+    //   const res = await fetch("/stardrop", {
+    //     method: "POST",
+    //     body: formData,
+    //   });
+    //   const resJson = await res.json();
 
-      console.log("DEBUG: resJson", resJson);
-      setIsCreating(false);
-    } catch (err) {
-      setIsCreating(false);
-      console.error(err);
-    }
+    //   console.log("DEBUG: resJson", resJson);
+    //   setIsCreating(false);
+    // } catch (err) {
+    //   setIsCreating(false);
+    //   console.error(err);
+    // }
   }
 
-  if (account.isConnected && siwe.isSignedIn) {
+  function onFormInvalid(
+    errors: FieldErrors<z.infer<typeof CreateFormSchema>>
+  ) {
+    console.log("== START CREATE FORM ERROR ===");
+    console.error(errors);
+    console.log("== END CREATE FORM ERROR ===");
+  }
+
+  if (isConnected && isSignedIn) {
     return (
       <div className="px-4 py-4 sm:px-6 md:px-7 md:py-6 lg:py-9 lg:px-0">
         <Form {...form}>
           <form
             className="flex flex-col space-y-8 lg:max-w-xl lg:mx-auto"
-            onSubmit={form.handleSubmit(onSubmit)}
+            onSubmit={form.handleSubmit(onSubmit, onFormInvalid)}
           >
             {/* Start from header */}
             <div className="flex flex-col space-y-2">
@@ -353,8 +359,8 @@ export function CreateForm() {
                         Optimism
                       </FormLabel>
                       <FormDescription className="text-base font-medium text-white/60">
-                        Eligibile users will be able to claim this Stardrop on
-                        Optimism
+                        If enabled, eligibile users will be able to claim this
+                        Stardrop on Optimism
                       </FormDescription>
                     </div>
                   </FormItem>
@@ -379,8 +385,8 @@ export function CreateForm() {
                         Base
                       </FormLabel>
                       <FormDescription className="text-base font-medium text-white/60">
-                        Eligibile users will be able to claim this Stardrop on
-                        Base
+                        If enabled, eligibile users will be able to claim this
+                        Stardrop on Base
                       </FormDescription>
                     </div>
                   </FormItem>
@@ -405,8 +411,8 @@ export function CreateForm() {
                         Zora
                       </FormLabel>
                       <FormDescription className="text-base font-medium text-white/60">
-                        Eligibile users will be able to claim this Stardrop on
-                        Zora
+                        If enabled, eligibile users will be able to claim this
+                        Stardrop on Zora
                       </FormDescription>
                     </div>
                   </FormItem>
@@ -417,23 +423,10 @@ export function CreateForm() {
             {/* End onchain activity */}
 
             {/* Start Create Button */}
-            <div className="mt-8 max-w-xl">
-              {!isCreating && (
-                <Button type="submit" className="w-full" size="lg">
-                  Create Stardrop
-                </Button>
-              )}
-              {isCreating && (
-                <Button
-                  type="submit"
-                  disabled={true}
-                  className="w-full cursor-wait"
-                  size="lg"
-                >
-                  <Icons.spinner className="animate-spin h-5 w-5 mr-2" />
-                  <span>Create Stardrop</span>
-                </Button>
-              )}
+            <div>
+              <Button type="submit" className="w-full" size="lg">
+                Create Stardrop
+              </Button>
             </div>
             {/* End Create Button */}
           </form>
