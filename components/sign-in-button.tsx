@@ -3,6 +3,7 @@
 import { ChevronRight } from "lucide-react";
 import { Avatar, ConnectKitButton, useSIWE } from "connectkit";
 import { Button } from "@/components/ui/button";
+import { Icons } from "./icons";
 
 export function SignedAccount(props: {
   show?: () => void;
@@ -14,29 +15,19 @@ export function SignedAccount(props: {
 
   return (
     <Button
-      variant={"secondary"}
       className="flex flex-row space-x-2"
+      variant={"ghost"}
       onClick={show}
     >
-      <Avatar address={address} size={24} />
+      <Avatar address={address} size={24} radius={8} />
       <span>{ensName ? ensName : truncatedAddress}</span>
     </Button>
   );
 }
 
-export function SignIn(props: {
-  size: "sm" | "lg" | "jumbo";
-  show?: () => void;
-  signIn?: () => void;
-}) {
-  const { size, show, signIn } = props;
-  return (
-    <Button size={size} variant={"secondary"} onClick={signIn ? signIn : show}>
-      <div className="flex flex-row space-x-1 items-center">
-        <span>Sign In</span>
-      </div>
-    </Button>
-  );
+export function SignIn(props: { show?: () => void; signIn?: () => void }) {
+  const { show, signIn } = props;
+  return <Button onClick={signIn ? signIn : show}>Connect Wallet</Button>;
 }
 
 export function SignInButton(props: { size?: "sm" | "lg" | "jumbo" }) {
@@ -52,10 +43,10 @@ export function SignInButton(props: { size?: "sm" | "lg" | "jumbo" }) {
           if (siwe.isSignedIn) {
             return <SignedAccount {...props} />;
           } else {
-            return <SignIn size={size ? size : "sm"} signIn={siwe.signIn} />;
+            return <SignIn signIn={siwe.signIn} />;
           }
         } else {
-          return <SignIn size={size ? size : "sm"} show={show} />;
+          return <SignIn show={show} />;
         }
       }}
     </ConnectKitButton.Custom>

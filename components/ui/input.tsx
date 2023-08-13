@@ -17,9 +17,9 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           // Shape
           "flex w-full rounded-xl px-4 py-4",
           // Default styles
-          "bg-white text-gray-900 ring-2 ring-gray-100 placeholder:text-gray-400 ring-offset-white",
+          "bg-white/5 text-white ring-2 ring-white/10 placeholder:text-white/60 ring-offset-white font-medium text-base",
           // Focus styles
-          "focus-visible:outline-none focus-visible:ring-gray-900",
+          "focus-visible:outline-none focus-visible:ring-white/20 focus-visible:bg-white/10",
           // Error styles
           "aria-[invalid=true]:ring-red-500",
           // Disabled styles

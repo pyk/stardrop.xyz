@@ -41,6 +41,7 @@ import { activities, networkActivities } from "@/lib/activity-registry";
 import { Textarea } from "@/components/ui/textarea";
 import { CreateFormMedia } from "./create-form-media";
 import { Button } from "./ui/button";
+import { useAccount } from "wagmi";
 
 export const CreateFormSchema = z.object({
   // NFT data
@@ -95,6 +96,7 @@ export const CreateFormSchema = z.object({
 });
 
 export function CreateForm() {
+  const account = useAccount();
   const siwe = useSIWE();
 
   // 1. Define your form.
@@ -147,59 +149,52 @@ export function CreateForm() {
     }
   }
 
-  if (siwe.isSignedIn) {
+  if (account.isConnected && siwe.isSignedIn) {
     return (
       <div className="px-4 py-4 sm:px-6 md:px-7 md:py-6 lg:py-9 lg:px-0">
         <Form {...form}>
           <form
-            className="lg:max-w-3xl mx-auto"
+            className="lg:max-w-xl lg:mx-auto"
             onSubmit={form.handleSubmit(onSubmit)}
           >
             {/* Start from header */}
             <div className="flex flex-col space-y-2">
-              <h1 className="font-bold text-3xl md:text-4xl text-gray-900">
+              <h1 className="font-medium text-3xl md:text-4xl text-white">
                 Create Stardrop
               </h1>
-              <p className="font-medium text-gray-500 text-lg">
+              <p className="font-medium text-white/60 text-lg">
                 Reward onchain activity with NFT
               </p>
             </div>
             {/* End from header */}
 
-            {/* Start Name */}
-            <div className="mt-8 max-w-xl">
+            {/* Stardrop metadata */}
+            <div className="flex flex-col space-y-4">
+              {/* Start Name */}
               <FormField
                 control={form.control}
                 name="nftName"
                 render={({ field }) => (
                   <FormItem className="mt-4">
-                    <FormLabel className="font-bold text-gray-900 text-base">
-                      Name
-                    </FormLabel>
                     <FormControl>
-                      <Input placeholder="Welcome to Base" {...field} />
+                      <Input placeholder="Name" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-            </div>
-            {/* End Name */}
+              {/* End Name */}
 
-            {/* Start Symbol */}
-            <div className="mt-8 max-w-xl">
+              {/* Start Symbol */}
               <FormField
                 control={form.control}
                 name="nftSymbol"
                 render={({ field }) => (
                   <FormItem className="mt-4">
-                    <FormLabel className="font-bold text-gray-900 text-base">
-                      Symbol
-                    </FormLabel>
                     <FormControl>
                       <Input
                         className="uppercase"
-                        placeholder="STARDROP"
+                        placeholder="SYMBOL"
                         {...field}
                       />
                     </FormControl>
@@ -207,22 +202,17 @@ export function CreateForm() {
                   </FormItem>
                 )}
               />
-            </div>
-            {/* End Symbol */}
+              {/* End Symbol */}
 
-            {/* Start Description */}
-            <div className="mt-8 max-w-xl">
+              {/* Start Description */}
               <FormField
                 control={form.control}
                 name="nftDescription"
                 render={({ field }) => (
                   <FormItem className="mt-4">
-                    <FormLabel className="font-bold text-gray-900 text-base">
-                      Description
-                    </FormLabel>
                     <FormControl>
                       <Textarea
-                        placeholder="Onchain Summer is started. Bridge to Base mainnet in order to claim this special NFT."
+                        placeholder="Description"
                         className="resize-none"
                         {...field}
                       />
@@ -231,14 +221,13 @@ export function CreateForm() {
                   </FormItem>
                 )}
               />
-            </div>
-            {/* End Description */}
+              {/* End Description */}
 
-            {/* Start Media */}
-            <div className="mt-8 max-w-xl">
+              {/* Start Media */}
               <CreateFormMedia form={form} />
+
+              {/* End Media */}
             </div>
-            {/* End Media */}
 
             {/* Start onchain activity */}
             <div className="mt-8">
@@ -442,10 +431,10 @@ export function CreateForm() {
     return (
       <div className="flex-1 flex flex-col justify-center items-center space-y-4 md:space-y-8">
         <div className="flex flex-col items-center space-y-2">
-          <h1 className="font-bold text-5xl max-w-[320px] sm:max-w-none sm:text-6xl lg:text-7xl text-center text-gray-900">
+          <h1 className="font-medium text-5xl max-w-[320px] sm:max-w-none sm:text-6xl lg:text-7xl text-center text-white">
             Create Stardrop
           </h1>
-          <p className="text-xl max-w-[320px] sm:text-2xl sm:max-w-[400px] lg:text-3xl lg:max-w-[600px] text-center text-gray-500">
+          <p className="text-xl max-w-[320px] sm:text-2xl sm:max-w-[400px] lg:text-3xl lg:max-w-[600px] text-center text-white/60">
             Start creating a new Stardrop by connecting your wallet first
           </p>
         </div>

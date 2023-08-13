@@ -27,13 +27,10 @@ export function CreateFormMedia(props: {
         control={form.control}
         name="nftMedia"
         render={({ field }) => (
-          <FormItem className="mt-4">
-            <FormLabel className="font-bold text-gray-900 text-base">
-              Media
-            </FormLabel>
+          <FormItem>
             <FormControl>
-              <div className="flex flex-col items-center">
-                <div className="relative w-full aspect-square ring-2 ring-gray-100 rounded-xl">
+              <div className="flex flex-col items-center space-y-4">
+                <div className="relative w-full aspect-square ring-2 ring-white/10 rounded-xl">
                   <Image
                     src={sourceMedia}
                     fill={true}
@@ -43,7 +40,7 @@ export function CreateFormMedia(props: {
                 </div>
                 <label
                   htmlFor="replace-media"
-                  className="mt-2 cursor-pointer flex flex-col items-center rounded-xl py-4 w-full ring-2 text-gray-500 ring-gray-100 hover:ring-gray-900 hover:text-gray-900"
+                  className="font-medium mt-2 cursor-pointer flex flex-col items-center rounded-xl py-4 w-full ring-2 text-white/60 ring-white/10 hover:ring-white/20 hover:text-white hover:bg-white/10"
                 >
                   <p className="text-center text-base leading-0">
                     Replace media
@@ -72,10 +69,7 @@ export function CreateFormMedia(props: {
       control={form.control}
       name="nftMedia"
       render={({ field }) => (
-        <FormItem className="mt-4">
-          <FormLabel className="font-bold text-gray-900 text-base">
-            Media
-          </FormLabel>
+        <FormItem>
           <FormControl>
             <div className={cn("flex items-center justify-center w-full")}>
               <label
@@ -84,16 +78,16 @@ export function CreateFormMedia(props: {
                   // Shape
                   "flex flex-col items-center justify-center w-full h-64 cursor-pointer",
                   // Style
-                  "ring-2 ring-gray-100 rounded-xl"
+                  "ring-2 ring-white/10 rounded-xl"
                 )}
               >
                 <div className="flex flex-col items-center justify-center pt-5 pb-6 space-y-4">
-                  <ImageIcon size={32} className="text-gray-400" />
+                  <ImageIcon size={32} className="text-white/60" />
                   <div className="flex flex-col space-y-2 items-center leading-none">
-                    <p className="text-gray-400 dark:text-gray-400">
+                    <p className="text-white/60 font-medium">
                       Click to upload media from your device
                     </p>
-                    <p className="text-sm text-gray-400 dark:text-gray-400 leading-none">
+                    <p className="text-sm text-white/60 leading-none">
                       SVG, PNG, JPG, GIF or MP4
                     </p>
                   </div>
