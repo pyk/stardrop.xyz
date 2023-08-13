@@ -40,24 +40,41 @@ import { activityNetworks } from "@/lib/types";
 import { activities, networkActivities } from "@/lib/activity-registry";
 import { Textarea } from "@/components/ui/textarea";
 import { CreateFormMedia } from "./create-form-media";
-import { Button } from "./ui/button";
+import { Button } from "@/components/ui/button";
 import { useAccount } from "wagmi";
+import { Switch } from "@/components/ui/switch";
 
 export const CreateFormSchema = z.object({
   // NFT data
-  nftName: z.string().trim().min(1).max(50),
-  nftSymbol: z.string().trim().min(1).max(20).toUpperCase(),
-  nftDescription: z.string().max(10000),
-  nftMedia: z.instanceof(File).refine((media) => media && media.name != "", {
+  name: z.string().trim().min(1).max(50),
+  symbol: z.string().trim().min(1).max(20).toUpperCase(),
+  description: z.string().max(10000),
+  media: z.instanceof(File).refine((media) => media && media.name != "", {
     message: "Please provide the media",
   }),
 
-  activityNetwork: z.enum(activityNetworks, {
-    required_error: "You need to select a network.",
-  }),
+  activityNetwork: z
+    .enum(activityNetworks, {
+      required_error: "You need to select a network.",
+    })
+    .nullable(),
   activity: z.enum(activities, {
     required_error: "You need to select onchain activity.",
   }),
+
+  // Send ETH activity
+  sendETHRecipient: z
+    .string()
+    .refine((address) => isAddress(address), {
+      message: "Address invalid",
+    })
+    .optional(),
+  sendETHMinAmount: z.coerce.number().min(0).optional(),
+
+  // Publish on
+  publishOnOptimism: z.boolean(),
+  publishOnBase: z.boolean(),
+  publishOnZora: z.boolean(),
 
   // Activity:
   // Send ETH - Recipient address
@@ -85,14 +102,6 @@ export const CreateFormSchema = z.object({
     .nullable(),
 
   tokenMinAmount: z.coerce.number().min(0).optional(),
-
-  // actionTargetAddress: z.string(),
-  // actionSelector: z.string(),
-  // actionMinValue: z.number().min(0),
-  // name: z.string().min(2).max(50),
-  // symbol: z.string().toUpperCase().min(3).max(15),
-
-  // transactionHash: z.string(),
 });
 
 export function CreateForm() {
@@ -103,12 +112,12 @@ export function CreateForm() {
   const form = useForm<z.infer<typeof CreateFormSchema>>({
     resolver: zodResolver(CreateFormSchema),
     defaultValues: {
-      nftName: "",
-      nftSymbol: "",
-      nftDescription: "",
-      nftMedia: new File([], ""),
+      name: "",
+      symbol: "",
+      description: "",
+      media: new File([], ""),
 
-      activityNetwork: "ethereum",
+      activityNetwork: null,
       // You should avoid providing undefined as a default value, as it
       // conflicts with the default state of a controlled component.
       tokenAddress: null,
@@ -132,7 +141,7 @@ export function CreateForm() {
     setIsCreating(true);
 
     const formData = new FormData();
-    formData.set("nftMedia", values["nftMedia"]);
+    formData.set("media", values["media"]);
 
     try {
       const res = await fetch("/stardrop", {
@@ -154,7 +163,7 @@ export function CreateForm() {
       <div className="px-4 py-4 sm:px-6 md:px-7 md:py-6 lg:py-9 lg:px-0">
         <Form {...form}>
           <form
-            className="lg:max-w-xl lg:mx-auto"
+            className="flex flex-col space-y-8 lg:max-w-xl lg:mx-auto"
             onSubmit={form.handleSubmit(onSubmit)}
           >
             {/* Start from header */}
@@ -173,7 +182,7 @@ export function CreateForm() {
               {/* Start Name */}
               <FormField
                 control={form.control}
-                name="nftName"
+                name="name"
                 render={({ field }) => (
                   <FormItem className="mt-4">
                     <FormControl>
@@ -188,7 +197,7 @@ export function CreateForm() {
               {/* Start Symbol */}
               <FormField
                 control={form.control}
-                name="nftSymbol"
+                name="symbol"
                 render={({ field }) => (
                   <FormItem className="mt-4">
                     <FormControl>
@@ -207,7 +216,7 @@ export function CreateForm() {
               {/* Start Description */}
               <FormField
                 control={form.control}
-                name="nftDescription"
+                name="description"
                 render={({ field }) => (
                   <FormItem className="mt-4">
                     <FormControl>
@@ -230,157 +239,43 @@ export function CreateForm() {
             </div>
 
             {/* Start onchain activity */}
-            <div className="mt-8">
-              <h2 className="font-bold text-lg text-gray-900">
-                Onchain activity
-              </h2>
-              <p className="text-gray-500">
-                Specify required onchain acitivity to claim the stardrop
-              </p>
-            </div>
-            {/* End onchain activity */}
+            <div className="flex flex-col space-y-4">
+              {/* Start header */}
+              <div className="">
+                <h2 className="font-medium text-lg text-white leading-6">
+                  Onchain activity
+                </h2>
+                <p className="font-medium text-base text-white/60">
+                  Specify required onchain acitivity to claim the stardrop
+                </p>
+              </div>
+              {/* Start header */}
 
-            {/* Select source chain */}
-            <div className="mt-8 max-w-xl">
+              {/* Start Select network */}
               <FormField
+                control={form.control}
                 name="activityNetwork"
-                control={form.control}
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="font-bold text-gray-900 text-base">
-                      Choose network
-                    </FormLabel>
-                    <FormControl>
-                      <RadioGroup
-                        onValueChange={field.onChange}
-                        defaultValue={"ethereum"}
-                        className="grid grid-cols-3 sm:grid-cols-4 gap-2"
-                      >
-                        {/* Start Ethereum */}
-                        <FormItem className="space-y-0">
-                          <FormControl>
-                            <RadioGroupChainItem
-                              value="ethereum"
-                              className="bg-gray-100 hover:bg-black hover:bg-[url('/chain-selected-bg.svg')] hover:bg-cover hover:bg-center rounded-2xl px-4 py-6  data-[state=checked]:bg-black data-[state=checked]:bg-[url('/chain-selected-bg.svg')] data-[state=checked]:bg-cover data-[state=checked]:bg-center min-w-[100px] w-full group/ethereum overflow-hidden"
-                            >
-                              <div className="z-10 flex flex-col space-y-2 items-center">
-                                <Icons.ethereum className="fill-gray-900 group-hover/ethereum:fill-white group-data-[state=checked]/ethereum:fill-white h-16 w-16" />
-                                <div className="flex flex-col space-y-1">
-                                  <h3 className="text-sm font-bold text-gray-900 group-hover/ethereum:text-white group-data-[state=checked]/ethereum:text-white leading-none">
-                                    Ethereum
-                                  </h3>
-                                  <p className="text-sm font-medium text-gray-400 group-hover/ethereum:text-white/80 group-data-[state=checked]/ethereum:text-white/80 leading-none">
-                                    ETH
-                                  </p>
-                                </div>
-                              </div>
-                            </RadioGroupChainItem>
-                          </FormControl>
-                        </FormItem>
-                        {/* End Ethereum */}
-
-                        {/* Start Optimism */}
-                        <FormItem className="space-y-0">
-                          <FormControl>
-                            <RadioGroupChainItem
-                              value="optimism"
-                              className="bg-gray-100 hover:bg-black hover:bg-[url('/chain-selected-bg.svg')] hover:bg-cover hover:bg-center rounded-2xl px-4 py-6  data-[state=checked]:bg-black data-[state=checked]:bg-[url('/chain-selected-bg.svg')] data-[state=checked]:bg-cover data-[state=checked]:bg-center min-w-[100px] w-full group/optimism overflow-hidden"
-                            >
-                              <div className="z-10 flex flex-col space-y-2 items-center">
-                                <Icons.optimism className="fill-gray-900 group-hover/optimism:fill-white group-data-[state=checked]/optimism:fill-white h-16 w-16" />
-                                <div className="flex flex-col space-y-1">
-                                  <h3 className="text-sm font-bold text-gray-900 group-hover/optimism:text-white group-data-[state=checked]/optimism:text-white leading-none">
-                                    Optimism
-                                  </h3>
-                                  <p className="text-sm font-medium text-gray-400 group-hover/optimism:text-white/80 group-data-[state=checked]/optimism:text-white/80 leading-none">
-                                    OP
-                                  </p>
-                                </div>
-                              </div>
-                            </RadioGroupChainItem>
-                          </FormControl>
-                        </FormItem>
-                        {/* End Optimism */}
-
-                        {/* Start Base */}
-                        <FormItem className="space-y-0">
-                          <FormControl>
-                            <RadioGroupChainItem
-                              value="base"
-                              className="bg-gray-100 hover:bg-black hover:bg-[url('/chain-selected-bg.svg')] hover:bg-cover hover:bg-center rounded-2xl px-4 py-6  data-[state=checked]:bg-black data-[state=checked]:bg-[url('/chain-selected-bg.svg')] data-[state=checked]:bg-cover data-[state=checked]:bg-center min-w-[100px] w-full group/base overflow-hidden"
-                            >
-                              <div className="z-10 flex flex-col space-y-2 items-center">
-                                <Icons.base className="fill-gray-900 group-hover/base:fill-white group-data-[state=checked]/base:fill-white h-16 w-16" />
-                                <div className="flex flex-col space-y-1">
-                                  <h3 className="text-sm font-bold text-gray-900 group-hover/base:text-white group-data-[state=checked]/base:text-white leading-none">
-                                    Base
-                                  </h3>
-                                  <p className="text-sm font-medium text-gray-400 group-hover/base:text-white/80 group-data-[state=checked]/base:text-white/80 leading-none">
-                                    BASE
-                                  </p>
-                                </div>
-                              </div>
-                            </RadioGroupChainItem>
-                          </FormControl>
-                        </FormItem>
-                        {/* End Base */}
-
-                        {/* Start Zora */}
-                        <FormItem className="space-y-0">
-                          <FormControl>
-                            <RadioGroupChainItem
-                              value="zora"
-                              className="bg-gray-100 hover:bg-black hover:bg-[url('/chain-selected-bg.svg')] hover:bg-cover hover:bg-center rounded-2xl px-4 py-6  data-[state=checked]:bg-black data-[state=checked]:bg-[url('/chain-selected-bg.svg')] data-[state=checked]:bg-cover data-[state=checked]:bg-center min-w-[100px] w-full group/zora overflow-hidden"
-                            >
-                              <div className="z-10 flex flex-col space-y-2 items-center">
-                                <Icons.zora className="fill-gray-900 group-hover/zora:fill-white group-data-[state=checked]/zora:fill-white h-16 w-16" />
-                                <div className="flex flex-col space-y-1">
-                                  <h3 className="text-sm font-bold text-gray-900 group-hover/zora:text-white group-data-[state=checked]/zora:text-white leading-none">
-                                    Zora
-                                  </h3>
-                                  <p className="text-sm font-medium text-gray-400 group-hover/zora:text-white/80 group-data-[state=checked]/zora:text-white/80 leading-none">
-                                    ZORA
-                                  </p>
-                                </div>
-                              </div>
-                            </RadioGroupChainItem>
-                          </FormControl>
-                        </FormItem>
-                        {/* End Base */}
-                      </RadioGroup>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            {/* Select onchain activity */}
-            <div className="mt-8 max-w-xl">
-              <FormField
-                control={form.control}
-                name="activity"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="font-bold text-gray-900 text-base">
-                      Choose activity
-                    </FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
+                    <Select onValueChange={field.onChange}>
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select activity" />
+                          <SelectValue placeholder="Select network" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {/* Show supported activity in selected network */}
-                        {networkActivities[activityNetwork].map((activity) => (
+                        {/* Show supported networks */}
+                        {[
+                          { value: "ethereum", name: "Ethereum" },
+                          { value: "optimism", name: "Optimism" },
+                          { value: "base", name: "Base" },
+                          { value: "zora", name: "Zora" },
+                        ].map((network) => (
                           <SelectItem
-                            key={activity.value}
-                            value={activity.value}
+                            key={network.value}
+                            value={network.value}
                           >
-                            {activity.title}
+                            {network.name}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -389,15 +284,137 @@ export function CreateForm() {
                   </FormItem>
                 )}
               />
+              {/* end select network*/}
 
-              {activity == null && <CreateFormNoActivity />}
+              {/* Start Select activity */}
+              <FormField
+                control={form.control}
+                name="activity"
+                render={({ field }) => (
+                  <FormItem>
+                    <Select onValueChange={field.onChange}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select activity" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {/* Show supported activity in selected network */}
+                        {activityNetwork &&
+                          networkActivities[activityNetwork].map(
+                            (activity) => (
+                              <SelectItem
+                                key={activity.value}
+                                value={activity.value}
+                              >
+                                {activity.title}
+                              </SelectItem>
+                            )
+                          )}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              {/* end select activity*/}
+
               {activity == "send-eth" && <CreateFormSendETH form={form} />}
-              {activity == "receive-eth" && (
-                <CreateFormReceiveETH form={form} />
-              )}
-              {activity == "send-token" && <CreateFormSendToken form={form} />}
             </div>
-            {/* end onchain activity */}
+            {/* End onchain activity */}
+
+            {/* Start publish on */}
+            <div className="flex flex-col space-y-4">
+              {/* Start header */}
+              <div className="">
+                <h2 className="font-medium text-lg text-white leading-6">
+                  Publish on
+                </h2>
+                <p className="font-medium text-base text-white/60">
+                  Enable network(s) to publish the stardrop
+                </p>
+              </div>
+              {/* Start header */}
+
+              {/* Start publish on optimism */}
+              <FormField
+                control={form.control}
+                name="publishOnOptimism"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-center rounded-xl p-4 space-x-4 bg-white/5">
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                    <div className="w-full">
+                      <FormLabel className="text-base font-medium">
+                        Optimism
+                      </FormLabel>
+                      <FormDescription className="text-base font-medium text-white/60">
+                        Eligibile users will be able to claim this Stardrop on
+                        Optimism
+                      </FormDescription>
+                    </div>
+                  </FormItem>
+                )}
+              />
+              {/* end publish on optimism*/}
+
+              {/* Start publish on Base */}
+              <FormField
+                control={form.control}
+                name="publishOnBase"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-center rounded-xl p-4 space-x-4 bg-white/5">
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                    <div className="w-full">
+                      <FormLabel className="text-base font-medium">
+                        Base
+                      </FormLabel>
+                      <FormDescription className="text-base font-medium text-white/60">
+                        Eligibile users will be able to claim this Stardrop on
+                        Base
+                      </FormDescription>
+                    </div>
+                  </FormItem>
+                )}
+              />
+              {/* end publish on Base */}
+
+              {/* Start publish on Zora */}
+              <FormField
+                control={form.control}
+                name="publishOnZora"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-center rounded-xl p-4 space-x-4 bg-white/5">
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                    <div className="w-full">
+                      <FormLabel className="text-base font-medium">
+                        Zora
+                      </FormLabel>
+                      <FormDescription className="text-base font-medium text-white/60">
+                        Eligibile users will be able to claim this Stardrop on
+                        Zora
+                      </FormDescription>
+                    </div>
+                  </FormItem>
+                )}
+              />
+              {/* end publish on Base */}
+            </div>
+            {/* End onchain activity */}
 
             {/* Start Create Button */}
             <div className="mt-8 max-w-xl">
@@ -419,9 +436,6 @@ export function CreateForm() {
               )}
             </div>
             {/* End Create Button */}
-
-            {/* Start submission status */}
-            {/* End submission status */}
           </form>
         </Form>
       </div>

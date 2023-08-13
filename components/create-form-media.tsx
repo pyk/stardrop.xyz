@@ -3,7 +3,7 @@ import { z } from "zod";
 import { ImageIcon } from "lucide-react";
 import Image from "next/image";
 
-import { CreateFormSchema } from "@/components/create-page";
+import { CreateFormSchema } from "@/components/create-form";
 import {
   FormControl,
   FormField,

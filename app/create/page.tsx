@@ -7,7 +7,7 @@ import Link from "next/link";
 import { SignInButton } from "@/components/sign-in-button";
 
 export const metadata: Metadata = {
-  title: "Create Stardrop | Stardrop",
+  title: "Create Stardrop",
   description: `Stardrop is a permissionless protocol to reward onchain activity with NFT. Powered by Zora`,
 };
 

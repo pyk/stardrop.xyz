@@ -3,7 +3,7 @@
 import { z } from "zod";
 import { UseFormReturn } from "react-hook-form";
 
-import { CreateFormSchema } from "@/components/create-page";
+import { CreateFormSchema } from "@/components/create-form";
 import {
   FormControl,
   FormField,
