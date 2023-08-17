@@ -1,7 +1,22 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with
-[`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Stardrop App
+
+Create and claim Stardrop with ease.
 
 ## Getting Started
+
+First, create new `.env.local` with the following content:
+
+```
+NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID=
+# openssl rand -base64 32
+SIWE_SESSION_SECRET=
+
+NFT_STORAGE_API_KEY=
+DATABASE_URL=
+
+CREATOR_ADDRESS=
+CREATOR_SECRET=
+```
 
 First, run the development server:
 
