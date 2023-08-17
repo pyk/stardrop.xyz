@@ -6,7 +6,14 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 import { Icons } from "@/components/icons";
 import { Button } from "@/components/ui/button";
-import { PackagePlus } from "lucide-react";
+import {
+  PackagePlus,
+  ArrowRightLeft,
+  Rainbow,
+  Vote,
+  RefreshCcw,
+  MoreHorizontal,
+} from "lucide-react";
 
 export default function Home() {
   return (
@@ -33,17 +40,60 @@ export default function Home() {
       {/* End Navigation */}
 
       {/* Start hero */}
-      <div className="flex flex-col w-100 mx-6 px-4 py-6 border border-white/20 rounded-xl">
+      <div
+        className={cn(
+          // Shape
+          "flex flex-col w-100 mx-6 my-6 md:mx-7 md:my-7 lg:mx-8 lg:my-8 px-6 py-16 sm:py-20 md:py-28 lg:py-44 space-y-4 sm:space-y-6 md:space-y-8",
+          // Styles
+          "ring-1 ring-white/10 rounded-2xl bg-[url('/hero-bg-planet.svg')] bg-cover bg-right-bottom"
+        )}
+      >
         <div>
-          <h1 className="text-2xl">
-            Reward your users with NFTs, the easy way
+          <h1 className="text-3xl font-medium sm:text-5xl md:text-6xl text-center max-w-xl mx-auto">
+            Reward Onchain Activity with NFT
           </h1>
-          <p>
-            Stardrop is a permissionless platform that allows you to reward
-            others with special NFTs based on their on-chain activity
-          </p>
         </div>
-        <div>image</div>
+
+        <div className="flex flex-row space-x-2 flex-wrap justify-center md:hidden">
+          <Button variant="ghost" size="icon" className="ring-1 ring-white/10">
+            <ArrowRightLeft size={24} />
+          </Button>
+          <Button variant="ghost" size="icon" className="ring-1 ring-white/10">
+            <Rainbow size={24} />
+          </Button>
+          <Button variant="ghost" size="icon" className="ring-1 ring-white/10">
+            <Vote size={24} />
+          </Button>
+          <Button variant="ghost" size="icon" className="ring-1 ring-white/10">
+            <RefreshCcw size={24} />
+          </Button>
+          <Button variant="ghost" size="icon" className="ring-1 ring-white/10">
+            <MoreHorizontal size={24} />
+          </Button>
+        </div>
+
+        <div className="hidden md:flex flex-row space-x-2 flex-wrap justify-center">
+          <Button variant={"ghost"} className="ring-1 ring-white/10">
+            <ArrowRightLeft size={24} className="mr-2" />
+            Transfer
+          </Button>
+          <Button variant={"ghost"} className="ring-1 ring-white/10">
+            <Rainbow size={24} className="mr-2" />
+            Bridge
+          </Button>
+          <Button variant={"ghost"} className="ring-1 ring-white/10">
+            <Vote size={24} className="mr-2" />
+            Vote
+          </Button>
+          <Button variant={"ghost"} className="ring-1 ring-white/10">
+            <RefreshCcw size={24} className="mr-2" />
+            Swap
+          </Button>
+          <Button variant={"ghost"} className="ring-1 ring-white/10">
+            <MoreHorizontal size={24} className="mr-2" />
+            More
+          </Button>
+        </div>
       </div>
       {/* End hero */}
     </main>
