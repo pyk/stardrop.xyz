@@ -22,12 +22,12 @@ export function CreateFormSendToken(props: {
   const { form } = props;
 
   const activityNetwork = form.watch("activityNetwork", "ethereum");
-  const activityAddress = form.watch("activityAddress");
+  const recipient = form.watch("sendTokenRecipient");
 
   const tokenAddress = form.watch("tokenAddress");
   const tokenMetadata = useTokenMetadata(
     activityNetwork,
-    isAddress(tokenAddress) ? tokenAddress : null
+    isAddress(tokenAddress!) ? tokenAddress : null
   );
   const tokenSymbol = tokenMetadata.data
     ? tokenMetadata.data.symbol
@@ -54,6 +54,7 @@ export function CreateFormSendToken(props: {
             <FormItem className="mt-4">
               <FormLabel>Token address</FormLabel>
               <FormControl>
+                {/* @ts-expect-error */}
                 <Input
                   placeholder="0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
                   {...field}
@@ -65,7 +66,7 @@ export function CreateFormSendToken(props: {
         />
         <FormField
           control={form.control}
-          name="activityAddress"
+          name="sendTokenRecipient"
           render={({ field }) => (
             <FormItem className="mt-4">
               <FormLabel>Recipient address</FormLabel>
@@ -110,8 +111,8 @@ export function CreateFormSendToken(props: {
               {tokenMinAmount ? tokenMinAmount : 0} {tokenSymbol}
             </b>{" "}
             to the <b>{activityNetwork}</b> address{" "}
-            <b>{activityAddress ? activityAddress : "(recipient address)"}</b>{" "}
-            in one transaction will be eligible to claim the stardrop
+            <b>{recipient ? recipient : "(recipient address)"}</b> in one
+            transaction will be eligible to claim the stardrop
           </p>
         </div>
       </div>

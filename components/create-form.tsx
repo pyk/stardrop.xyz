@@ -71,6 +71,24 @@ export const CreateFormSchema = z.object({
     .optional(),
   sendETHMinAmount: z.coerce.number().min(0).optional(),
 
+  // Receive ETH activity
+  receiveETHSender: z
+    .string()
+    .refine((address) => isAddress(address), {
+      message: "Address invalid",
+    })
+    .optional(),
+  receiveETHMinAmount: z.coerce.number().min(0).optional(),
+
+  // Send token activity
+  sendTokenRecipient: z
+    .string()
+    .refine((address) => isAddress(address), {
+      message: "Address invalid",
+    })
+    .optional(),
+  sendTokenMinAmount: z.coerce.number().min(0).optional(),
+
   // Publish on
   publishOnOptimism: z.boolean(),
   publishOnBase: z.boolean(),

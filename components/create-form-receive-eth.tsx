@@ -19,15 +19,15 @@ export function CreateFormReceiveETH(props: {
   const { form } = props;
 
   const activityNetwork = form.watch("activityNetwork", "ethereum");
-  const activityAddress = form.watch("activityAddress");
-  const activityMinMessageValue = form.watch("activityMinMessageValue");
+  const sender = form.watch("receiveETHSender");
+  const minAmount = form.watch("receiveETHMinAmount");
 
   return (
     <>
       <div>
         <FormField
           control={form.control}
-          name="activityAddress"
+          name="receiveETHSender"
           render={({ field }) => (
             <FormItem className="mt-4">
               <FormLabel>Sender address</FormLabel>
@@ -43,7 +43,7 @@ export function CreateFormReceiveETH(props: {
         />
         <FormField
           control={form.control}
-          name="activityMinMessageValue"
+          name="receiveETHMinAmount"
           render={({ field }) => (
             <FormItem className="mt-4">
               <FormLabel>
@@ -68,10 +68,10 @@ export function CreateFormReceiveETH(props: {
         <div className="bg-gray-100 overflow-x-scroll px-4 py-5 rounded-xl">
           <p>
             Anyone who has received at least{" "}
-            <b>{activityMinMessageValue ? activityMinMessageValue : 0} ETH</b>{" "}
-            from the <b>{activityNetwork}</b> address{" "}
-            <b>{activityAddress ? activityAddress : "(sender address)"}</b> in
-            one transaction will be eligible to claim the stardrop
+            <b>{minAmount ? minAmount : 0} ETH</b> from the{" "}
+            <b>{activityNetwork}</b> address{" "}
+            <b>{sender ? sender : "(sender address)"}</b> in one transaction
+            will be eligible to claim the stardrop
           </p>
         </div>
       </div>

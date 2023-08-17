@@ -45,7 +45,7 @@ export default function Home() {
           // Shape
           "flex flex-col w-100 mx-6 my-6 md:mx-7 md:my-7 lg:mx-8 lg:my-8 px-6 py-16 sm:py-20 md:py-28 lg:py-44 space-y-4 sm:space-y-6 md:space-y-8",
           // Styles
-          "ring-1 ring-white/10 rounded-2xl bg-[url('/hero-bg-planet.svg')] bg-cover bg-right-bottom"
+          "ring-1 ring-white/10 rounded-2xl bg-[url('/hero-bg-checker.svg')] bg-cover bg-center"
         )}
       >
         <div>
