@@ -1,103 +1,34 @@
 import Link from "next/link";
 import Image from "next/image";
 
-import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuIndicator,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  NavigationLogoTrigger,
-  NavigationMenuViewport,
-} from "@/components/ui/navigation-menu";
+import { NavigationMenuLink } from "@/components/ui/navigation-menu";
 import * as React from "react";
 import { cn } from "@/lib/utils";
 import { Icons } from "@/components/icons";
 import { Button } from "@/components/ui/button";
-import { Plus, Globe, Star, Twitter } from "lucide-react";
+import { PackagePlus } from "lucide-react";
 
 export default function Home() {
   return (
     <main className="bg-black text-white min-h-screen">
       {/* Start Navigation */}
-      <div className="flex justify-between w-full px-2 py-4">
-        <NavigationMenu>
-          <NavigationMenuList>
-            <NavigationMenuItem>
-              <NavigationLogoTrigger className="flex flex-row space-x-2">
-                <Icons.logo className="h-6 w-6 fill-white stroke-white" />
-                <span>Stardrop</span>
-              </NavigationLogoTrigger>
-              <NavigationMenuContent className="bg-white min-w-[320px] min-h-max px-4 py-6 rounded-xl flex flex-col space-y-4">
-                <div>
-                  <h3 className="text-slate-400 px-4">Navigation</h3>
-                  <ul>
-                    <li>
-                      <Link
-                        className="flex flex-row items-center space-x-2 text-slate-900 px-4 py-2 hover:bg-slate-100 rounded-md button-focus-visible"
-                        href="/"
-                      >
-                        <Plus size={16} />
-                        <span>Create Stardrop</span>
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        className="flex flex-row items-center space-x-2 text-slate-900 px-4 py-2 hover:bg-slate-100 rounded-md button-focus-visible"
-                        href="/"
-                      >
-                        <Globe size={16} />
-                        <span>Explore Stardrop</span>
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        className="flex flex-row items-center space-x-2 text-slate-900 px-4 py-2 hover:bg-slate-100 rounded-md button-focus-visible"
-                        href="/"
-                      >
-                        <Star size={16} />
-                        <span>About</span>
-                      </Link>
-                    </li>
-                  </ul>
-                </div>
-                <div>
-                  <h3 className="text-slate-400 px-4">Community</h3>
-                  <ul>
-                    <li>
-                      <Link
-                        className="flex flex-row items-center space-x-2 text-slate-900 px-4 py-2 hover:bg-slate-100 rounded-md button-focus-visible"
-                        href="/"
-                      >
-                        <Twitter size={16} />
-                        <span>Follow Twitter</span>
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        className="flex flex-row items-center space-x-2 text-slate-900 px-4 py-2 hover:bg-slate-100 rounded-md button-focus-visible"
-                        href="/"
-                      >
-                        <Icons.discord className="h-4 w-4 fill-black" />
-                        <span>Join Discord</span>
-                      </Link>
-                    </li>
-                    {/* <li>Subscribe Mirror</li>
-                    <li>Join Zealy</li> */}
-                  </ul>
-                </div>
-              </NavigationMenuContent>
-            </NavigationMenuItem>
-          </NavigationMenuList>
-        </NavigationMenu>
-
-        <Button variant="ghost" asChild>
-          <Link href="https://discord.gg/">
-            <Icons.discord className="h-4 w-4 fill-white mr-2" />
-            Join discord
+      <div className="flex justify-between items-center w-full px-6 py-5 md:px-7 lg:px-8">
+        {/* Start logo */}
+        <Button variant="ghost" size="icon" asChild>
+          <Link href="/" className="px-2 py-2">
+            <Icons.logo className="h-6 w-6 fill-white" />
           </Link>
         </Button>
+        {/* End logo */}
+
+        {/* Start Create Stardrop */}
+        <Button asChild>
+          <Link href="/create">
+            <PackagePlus size={24} className="mr-2" />
+            Create Stardrop
+          </Link>
+        </Button>
+        {/* End Create stardrop */}
       </div>
       {/* End Navigation */}
 

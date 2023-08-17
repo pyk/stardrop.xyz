@@ -1,5 +1,7 @@
 "use client";
 
+import { redirect, useRouter } from "next/navigation";
+
 import { useSIWE } from "connectkit";
 import { SignInButton } from "@/components/sign-in-button";
 
@@ -53,12 +55,10 @@ export const CreateFormSchema = z.object({
     message: "Please provide the media",
   }),
 
-  activityNetwork: z
-    .enum(activityNetworks, {
-      required_error: "You need to select a network.",
-    })
-    .nullable(),
-  activity: z.enum(activities, {
+  activityNetwork: z.enum(activityNetworks, {
+    required_error: "You need to select a network.",
+  }),
+  activityType: z.enum(activities, {
     required_error: "You need to select onchain activity.",
   }),
 
@@ -92,7 +92,12 @@ export const CreateFormSchema = z.object({
   tokenMinAmount: z.coerce.number().min(0).optional(),
 });
 
+const CreateStardropResponseSchema = z.object({
+  id: z.number(),
+});
+
 export function CreateForm() {
+  const router = useRouter();
   const { isConnected } = useAccount();
   const { isSignedIn } = useSIWE();
 
@@ -106,7 +111,6 @@ export function CreateForm() {
       description: "",
       media: new File([], ""),
 
-      activityNetwork: null,
       // You should avoid providing undefined as a default value, as it
       // conflicts with the default state of a controlled component.
       tokenAddress: null,
@@ -125,35 +129,58 @@ export function CreateForm() {
     mode: "onChange",
   });
   const activityNetwork = form.watch("activityNetwork");
-  const activity = form.watch("activity");
+  const activity = form.watch("activityType");
 
   const [isCreating, setIsCreating] = useState<boolean>(false);
 
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof CreateFormSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
-
-    // Open dialog
     setIsCreating(true);
 
-    // const formData = new FormData();
-    // formData.set("media", values["media"]);
+    const formData = new FormData();
 
-    // try {
-    //   const res = await fetch("/stardrop", {
-    //     method: "POST",
-    //     body: formData,
-    //   });
-    //   const resJson = await res.json();
+    // NFT Metadata
+    formData.set("name", values["name"]);
+    formData.set("symbol", values["symbol"]);
+    formData.set("description", values["description"]);
+    formData.set("media", values["media"]);
 
-    //   console.log("DEBUG: resJson", resJson);
-    //   setIsCreating(false);
-    // } catch (err) {
-    //   setIsCreating(false);
-    //   console.error(err);
-    // }
+    // Activity
+    formData.set("activityNetwork", values["activityNetwork"]);
+    formData.set("activityType", values["activityType"]);
+
+    let activityData = "{}";
+
+    // Send eth data
+    if (values["activityType"] == "send-eth") {
+      const recipient = values["sendETHRecipient"];
+      if (recipient == null) {
+        throw new Error(`Stardrop: send-eth recipient cannot be null`);
+      }
+      const minAmount = values["sendETHMinAmount"];
+      const data = {
+        recipient,
+        minAmount,
+      };
+      activityData = JSON.stringify(data);
+    }
+    formData.set("activityData", activityData);
+
+    try {
+      const createRes = await fetch("/stardrop", {
+        method: "POST",
+        body: formData,
+      });
+      const createResJson = await createRes.json();
+      const data = CreateStardropResponseSchema.parse(createResJson);
+      console.log("DEBUG: Create Stardrop: data", data);
+      // redirect to https://stardrop.xyz/${id}/publish
+      router.push(`/${data.id}/publish`);
+      // setIsCreating(false);
+    } catch (err) {
+      setIsCreating(false);
+      console.error(err);
+    }
   }
 
   function onFormInvalid(
@@ -295,7 +322,7 @@ export function CreateForm() {
               {/* Start Select activity */}
               <FormField
                 control={form.control}
-                name="activity"
+                name="activityType"
                 render={({ field }) => (
                   <FormItem>
                     <Select onValueChange={field.onChange}>
@@ -424,9 +451,17 @@ export function CreateForm() {
 
             {/* Start Create Button */}
             <div>
-              <Button type="submit" className="w-full" size="lg">
-                Create Stardrop
-              </Button>
+              {!isCreating && (
+                <Button type="submit" className="w-full" size="lg">
+                  Create Stardrop
+                </Button>
+              )}
+              {isCreating && (
+                <Button type="submit" className="w-full" size="lg">
+                  <Icons.spinner className="w-6 h-6 mr-2 animate-spin" />{" "}
+                  Create Stardrop
+                </Button>
+              )}
             </div>
             {/* End Create Button */}
           </form>

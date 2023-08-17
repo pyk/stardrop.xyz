@@ -55,6 +55,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
   try {
     const newStardrop = await createStardrop({
+      creator: session.address,
       name: formData.get("name") as string,
       symbol: formData.get("symbol") as string,
       description: formData.get("description") as string,
