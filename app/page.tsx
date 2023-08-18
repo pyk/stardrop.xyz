@@ -48,9 +48,14 @@ export default function Home() {
           "ring-1 ring-white/10 rounded-2xl bg-[url('/hero-bg-checker.svg')] bg-cover bg-center"
         )}
       >
+        <div className="text-center">
+          <span className="text-sm md:text-base font-medium py-2 px-4 rounded-full bg-white/5 ring-2 ring-white/10 text-center">
+            Boost Onchain Participation
+          </span>
+        </div>
         <div>
-          <h1 className="text-3xl font-medium sm:text-5xl md:text-6xl text-center max-w-xl mx-auto">
-            Reward Onchain Activity with NFT
+          <h1 className="text-3xl font-medium sm:text-5xl md:text-6xl text-center max-w-2xl mx-auto">
+            Reward Any Smart Contract Interaction with NFTs
           </h1>
         </div>
 
