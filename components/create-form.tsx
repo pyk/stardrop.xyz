@@ -219,7 +219,7 @@ export function CreateForm() {
 
   if (isConnected && isSignedIn) {
     return (
-      <div className="px-4 py-4 sm:px-6 md:px-7 md:py-6 lg:py-9 lg:px-0">
+      <div className="px-6 md:px-7 lg:px-8 py-4 md:py-6 lg:py-9">
         <Form {...form}>
           <form
             className="flex flex-col space-y-8 lg:max-w-xl lg:mx-auto"
@@ -230,7 +230,7 @@ export function CreateForm() {
               <h1 className="font-medium text-3xl md:text-4xl text-white">
                 Create Stardrop
               </h1>
-              <p className="font-medium text-white/60 text-lg">
+              <p className="font-medium text-slate-400 text-lg">
                 Reward onchain activity with NFT
               </p>
             </div>
@@ -243,7 +243,7 @@ export function CreateForm() {
                 control={form.control}
                 name="name"
                 render={({ field }) => (
-                  <FormItem className="mt-4">
+                  <FormItem className="">
                     <FormControl>
                       <Input placeholder="Name" {...field} />
                     </FormControl>
@@ -301,11 +301,12 @@ export function CreateForm() {
             <div className="flex flex-col space-y-4">
               {/* Start header */}
               <div className="">
-                <h2 className="font-medium text-lg text-white leading-6">
-                  Onchain activity
+                <h2 className="font-medium text-xl text-white leading-6">
+                  Smart Contract Interaction
                 </h2>
-                <p className="font-medium text-base text-white/60">
-                  Specify required onchain acitivity to claim the stardrop
+                <p className="font-medium text-base text-slate-400 mt-1">
+                  Specify required smart contract interaction in order to mint
+                  the Stardrop
                 </p>
               </div>
               {/* Start header */}
@@ -389,7 +390,7 @@ export function CreateForm() {
                 <h2 className="font-medium text-lg text-white leading-6">
                   Publish on
                 </h2>
-                <p className="font-medium text-base text-white/60">
+                <p className="font-medium text-base text-slate-400">
                   Enable network(s) to publish the stardrop
                 </p>
               </div>
@@ -411,7 +412,7 @@ export function CreateForm() {
                       <FormLabel className="text-base font-medium">
                         Optimism
                       </FormLabel>
-                      <FormDescription className="text-base font-medium text-white/60">
+                      <FormDescription className="text-base font-medium text-slate-400">
                         If enabled, eligibile users will be able to claim this
                         Stardrop on Optimism
                       </FormDescription>
@@ -437,7 +438,7 @@ export function CreateForm() {
                       <FormLabel className="text-base font-medium">
                         Base
                       </FormLabel>
-                      <FormDescription className="text-base font-medium text-white/60">
+                      <FormDescription className="text-base font-medium text-slate-400">
                         If enabled, eligibile users will be able to claim this
                         Stardrop on Base
                       </FormDescription>
@@ -463,7 +464,7 @@ export function CreateForm() {
                       <FormLabel className="text-base font-medium">
                         Zora
                       </FormLabel>
-                      <FormDescription className="text-base font-medium text-white/60">
+                      <FormDescription className="text-base font-medium text-slate-400">
                         If enabled, eligibile users will be able to claim this
                         Stardrop on Zora
                       </FormDescription>
