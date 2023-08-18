@@ -32,7 +32,14 @@ import {
 import { Icons } from "@/components/icons";
 import { Input, InputMedia } from "@/components/ui/input";
 import { useState } from "react";
-import { AlertTriangle } from "lucide-react";
+import {
+  AlertTriangle,
+  ArrowRightLeft,
+  MoreHorizontal,
+  Rainbow,
+  RefreshCcw,
+  Vote,
+} from "lucide-react";
 import { CreateFormSendETH } from "./create-form-send-eth";
 import { CreateFormReceiveETH } from "./create-form-receive-eth";
 import { CreateFormNoActivity } from "./create-form-no-activity";
@@ -45,6 +52,7 @@ import { CreateFormMedia } from "./create-form-media";
 import { Button } from "@/components/ui/button";
 import { useAccount } from "wagmi";
 import { Switch } from "@/components/ui/switch";
+import { cn } from "@/lib/utils";
 
 export const CreateFormSchema = z.object({
   // NFT data
@@ -489,14 +497,102 @@ export function CreateForm() {
   } else {
     // flex-1 with parent flex and flex-col will fill remaining height
     return (
-      <div className="flex-1 flex flex-col justify-center items-center space-y-4 md:space-y-8">
-        <div className="flex flex-col items-center space-y-2">
-          <h1 className="font-medium text-5xl max-w-[320px] sm:max-w-none sm:text-6xl lg:text-7xl text-center text-white">
+      <div
+        className={cn(
+          // Shape
+          "flex flex-col w-100 mx-6 my-6 md:mx-7 md:my-7 lg:mx-8 lg:my-8 px-6 py-16 sm:py-20 md:py-28 lg:py-44 space-y-4 sm:space-y-6 md:space-y-8",
+          // Styles
+          "ring-1 ring-white/10 rounded-2xl bg-[url('/hero-bg-way.svg')] bg-cover bg-bottom"
+        )}
+      >
+        <div className="text-center">
+          <span className="text-sm md:text-base font-medium py-2 px-4 rounded-full bg-white/5 ring-2 ring-white/10 text-center">
+            Boost Onchain Participation
+          </span>
+        </div>
+        <div>
+          <h1 className="text-3xl font-medium sm:text-5xl md:text-6xl text-center max-w-2xl mx-auto">
             Create Stardrop
           </h1>
-          <p className="text-xl max-w-[320px] sm:text-2xl sm:max-w-[400px] lg:text-3xl lg:max-w-[600px] text-center text-white/60">
+          <p className="text-xl sm:text-2xl sm:mt-2 md:text-3xl max-w-xl font-medium text-slate-400 mx-auto text-center">
             Start creating a new Stardrop by connecting your wallet first
           </p>
+        </div>
+
+        <div className="flex flex-row space-x-2 flex-wrap justify-center md:hidden">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="ring-1 ring-white/10 cursor-default"
+          >
+            <ArrowRightLeft size={24} />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="ring-1 ring-white/10 cursor-default"
+          >
+            <Rainbow size={24} />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="ring-1 ring-white/10 cursor-default"
+          >
+            <Vote size={24} />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="ring-1 ring-white/10 cursor-default"
+          >
+            <RefreshCcw size={24} />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="ring-1 ring-white/10 cursor-default"
+          >
+            <MoreHorizontal size={24} />
+          </Button>
+        </div>
+
+        <div className="hidden md:flex flex-row space-x-2 flex-wrap justify-center">
+          <Button
+            variant={"ghost"}
+            className="ring-1 ring-white/10 cursor-default"
+          >
+            <ArrowRightLeft size={24} className="mr-2" />
+            Transfer
+          </Button>
+          <Button
+            variant={"ghost"}
+            className="ring-1 ring-white/10 cursor-default"
+          >
+            <Rainbow size={24} className="mr-2" />
+            Bridge
+          </Button>
+          <Button
+            variant={"ghost"}
+            className="ring-1 ring-white/10 cursor-default"
+          >
+            <Vote size={24} className="mr-2" />
+            Vote
+          </Button>
+          <Button
+            variant={"ghost"}
+            className="ring-1 ring-white/10 cursor-default"
+          >
+            <RefreshCcw size={24} className="mr-2" />
+            Swap
+          </Button>
+          <Button
+            variant={"ghost"}
+            className="ring-1 ring-white/10 cursor-default"
+          >
+            <MoreHorizontal size={24} className="mr-2" />
+            More
+          </Button>
         </div>
       </div>
     );
