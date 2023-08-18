@@ -24,11 +24,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  RadioGroup,
-  RadioGroupItem,
-  RadioGroupChainItem,
-} from "./ui/radio-group";
 import { Icons } from "@/components/icons";
 import { Input, InputMedia } from "@/components/ui/input";
 import { useState } from "react";
@@ -40,11 +35,7 @@ import {
   RefreshCcw,
   Vote,
 } from "lucide-react";
-import { CreateFormSendETH } from "./create-form-send-eth";
-import { CreateFormReceiveETH } from "./create-form-receive-eth";
-import { CreateFormNoActivity } from "./create-form-no-activity";
-import { CreateFormSendToken } from "./create-form-send-token";
-import { isAddress } from "viem";
+import { Address, isAddress } from "viem";
 import { activityNetworks } from "@/lib/types";
 import { activities, networkActivities } from "@/lib/activity-registry";
 import { Textarea } from "@/components/ui/textarea";
@@ -53,6 +44,7 @@ import { Button } from "@/components/ui/button";
 import { useAccount } from "wagmi";
 import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
+import { useSmartContractFunctions } from "@/hooks/useSmartContractFunctions";
 
 export const CreateFormSchema = z.object({
   // NFT data
@@ -63,59 +55,15 @@ export const CreateFormSchema = z.object({
     message: "Please provide the media",
   }),
 
-  activityNetwork: z.enum(activityNetworks, {
-    required_error: "You need to select a network.",
+  // Interaction data
+  interactionNetwork: z.enum(activityNetworks, {
+    required_error: "Please select the network",
   }),
-  activityType: z.enum(activities, {
-    required_error: "You need to select onchain activity.",
+  interactionAddress: z.string().refine((address) => isAddress(address), {
+    message: "Smart contract address invalid",
   }),
-
-  // Send ETH activity
-  sendETHRecipient: z
-    .string()
-    .refine((address) => isAddress(address), {
-      message: "Address invalid",
-    })
-    .optional(),
-  sendETHMinAmount: z.coerce.number().min(0).optional(),
-
-  // Receive ETH activity
-  receiveETHSender: z
-    .string()
-    .refine((address) => isAddress(address), {
-      message: "Address invalid",
-    })
-    .optional(),
-  receiveETHMinAmount: z.coerce.number().min(0).optional(),
-
-  // Send token activity
-  sendTokenRecipient: z
-    .string()
-    .refine((address) => isAddress(address), {
-      message: "Address invalid",
-    })
-    .optional(),
-  sendTokenMinAmount: z.coerce.number().min(0).optional(),
-
-  // Publish on
-  publishOnOptimism: z.boolean(),
-  publishOnBase: z.boolean(),
-  publishOnZora: z.boolean(),
-
-  // Activity:
-  // Send ETH - min amount sent to the recipient
-  // Receive ETH - min amount received from the sender
-  activityMinMessageValue: z.coerce.number().min(0).optional(),
-
-  // Send token and receive token
-  tokenAddress: z
-    .string()
-    .refine((address) => isAddress(address), {
-      message: "Address invalid",
-    })
-    .nullable(),
-
-  tokenMinAmount: z.coerce.number().min(0).optional(),
+  interactionSigHash: z.string(),
+  interactionMethod: z.string(),
 });
 
 const CreateStardropResponseSchema = z.object({
@@ -137,25 +85,24 @@ export function CreateForm() {
       description: "",
       media: new File([], ""),
 
-      // You should avoid providing undefined as a default value, as it
-      // conflicts with the default state of a controlled component.
-      tokenAddress: null,
-      tokenMinAmount: 0,
-      activityMinMessageValue: 0,
-
-      // Send ETH
-      sendETHMinAmount: 0,
-      sendETHRecipient: "",
-
-      // Publish
-      publishOnOptimism: false,
-      publishOnBase: false,
-      publishOnZora: false,
+      // Interactions
+      interactionAddress: "",
     },
     mode: "onChange",
   });
-  const activityNetwork = form.watch("activityNetwork");
-  const activity = form.watch("activityType");
+
+  // Monitor value changes
+  const interactionNetwork = form.watch("interactionNetwork");
+  const interactionAddress = form.watch("interactionAddress");
+
+  const smartContract = useSmartContractFunctions(
+    interactionNetwork,
+    interactionAddress as Address
+  );
+
+  console.log("DEBUG: interactionNetwork", interactionNetwork);
+  console.log("DEBUG: interactionAddress", interactionAddress);
+  console.log("DEBUG: smartContract", smartContract);
 
   const [isCreating, setIsCreating] = useState<boolean>(false);
 
@@ -171,26 +118,7 @@ export function CreateForm() {
     formData.set("description", values["description"]);
     formData.set("media", values["media"]);
 
-    // Activity
-    formData.set("activityNetwork", values["activityNetwork"]);
-    formData.set("activityType", values["activityType"]);
-
     let activityData = "{}";
-
-    // Send eth data
-    if (values["activityType"] == "send-eth") {
-      const recipient = values["sendETHRecipient"];
-      if (recipient == null) {
-        throw new Error(`Stardrop: send-eth recipient cannot be null`);
-      }
-      const minAmount = values["sendETHMinAmount"];
-      const data = {
-        recipient,
-        minAmount,
-      };
-      activityData = JSON.stringify(data);
-    }
-    formData.set("activityData", activityData);
 
     try {
       const createRes = await fetch("/stardrop", {
@@ -305,8 +233,7 @@ export function CreateForm() {
                   Smart Contract Interaction
                 </h2>
                 <p className="font-medium text-base text-slate-400 mt-1">
-                  Specify required smart contract interaction in order to mint
-                  the Stardrop
+                  Please specify the required smart contract interaction
                 </p>
               </div>
               {/* Start header */}
@@ -314,7 +241,7 @@ export function CreateForm() {
               {/* Start Select network */}
               <FormField
                 control={form.control}
-                name="activityNetwork"
+                name="interactionNetwork"
                 render={({ field }) => (
                   <FormItem>
                     <Select onValueChange={field.onChange}>
@@ -327,9 +254,9 @@ export function CreateForm() {
                         {/* Show supported networks */}
                         {[
                           { value: "ethereum", name: "Ethereum" },
-                          { value: "optimism", name: "Optimism" },
-                          { value: "base", name: "Base" },
-                          { value: "zora", name: "Zora" },
+                          // { value: "optimism", name: "Optimism" },
+                          // { value: "base", name: "Base" },
+                          // { value: "zora", name: "Zora" },
                         ].map((network) => (
                           <SelectItem
                             key={network.value}
@@ -346,133 +273,46 @@ export function CreateForm() {
               />
               {/* end select network*/}
 
-              {/* Start Select activity */}
+              {/* Start contract address */}
               <FormField
                 control={form.control}
-                name="activityType"
+                name="interactionAddress"
+                render={({ field }) => (
+                  <FormItem className="">
+                    <FormControl>
+                      <Input placeholder="Smart contract address" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              {/* End Smart contract address */}
+
+              {/* Start Select functions */}
+              <FormField
+                control={form.control}
+                name="interactionSigHash"
                 render={({ field }) => (
                   <FormItem>
                     <Select onValueChange={field.onChange}>
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select activity" />
+                          <SelectValue placeholder="Select functions" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {/* Show supported activity in selected network */}
-                        {activityNetwork &&
-                          networkActivities[activityNetwork].map(
-                            (activity) => (
-                              <SelectItem
-                                key={activity.value}
-                                value={activity.value}
-                              >
-                                {activity.title}
-                              </SelectItem>
-                            )
-                          )}
+                        {smartContract.data?.signatures.map((sig) => (
+                          <SelectItem key={sig.sighash} value={sig.sighash}>
+                            {sig.method}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              {/* end select activity*/}
-
-              {activity == "send-eth" && <CreateFormSendETH form={form} />}
-            </div>
-            {/* End onchain activity */}
-
-            {/* Start publish on */}
-            <div className="flex flex-col space-y-4">
-              {/* Start header */}
-              <div className="">
-                <h2 className="font-medium text-lg text-white leading-6">
-                  Publish on
-                </h2>
-                <p className="font-medium text-base text-slate-400">
-                  Enable network(s) to publish the stardrop
-                </p>
-              </div>
-              {/* Start header */}
-
-              {/* Start publish on optimism */}
-              <FormField
-                control={form.control}
-                name="publishOnOptimism"
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-center rounded-xl p-4 space-x-4 bg-white/5">
-                    <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-                    <div className="w-full">
-                      <FormLabel className="text-base font-medium">
-                        Optimism
-                      </FormLabel>
-                      <FormDescription className="text-base font-medium text-slate-400">
-                        If enabled, eligibile users will be able to claim this
-                        Stardrop on Optimism
-                      </FormDescription>
-                    </div>
-                  </FormItem>
-                )}
-              />
-              {/* end publish on optimism*/}
-
-              {/* Start publish on Base */}
-              <FormField
-                control={form.control}
-                name="publishOnBase"
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-center rounded-xl p-4 space-x-4 bg-white/5">
-                    <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-                    <div className="w-full">
-                      <FormLabel className="text-base font-medium">
-                        Base
-                      </FormLabel>
-                      <FormDescription className="text-base font-medium text-slate-400">
-                        If enabled, eligibile users will be able to claim this
-                        Stardrop on Base
-                      </FormDescription>
-                    </div>
-                  </FormItem>
-                )}
-              />
-              {/* end publish on Base */}
-
-              {/* Start publish on Zora */}
-              <FormField
-                control={form.control}
-                name="publishOnZora"
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-center rounded-xl p-4 space-x-4 bg-white/5">
-                    <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-                    <div className="w-full">
-                      <FormLabel className="text-base font-medium">
-                        Zora
-                      </FormLabel>
-                      <FormDescription className="text-base font-medium text-slate-400">
-                        If enabled, eligibile users will be able to claim this
-                        Stardrop on Zora
-                      </FormDescription>
-                    </div>
-                  </FormItem>
-                )}
-              />
-              {/* end publish on Base */}
+              {/* end select functions */}
             </div>
             {/* End onchain activity */}
 
@@ -486,7 +326,6 @@ export function CreateForm() {
               {isCreating && (
                 <Button type="submit" className="w-full" size="lg">
                   <Icons.spinner className="w-6 h-6 mr-2 animate-spin" />{" "}
-                  Create Stardrop
                 </Button>
               )}
             </div>

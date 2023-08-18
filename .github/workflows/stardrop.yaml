@@ -40,5 +40,16 @@ jobs:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           CREATOR_ADDRESS: ${{ secrets.CREATOR_ADDRESS }}
           CREATOR_SECRET: ${{ secrets.CREATOR_SECRET }}
+      - name: 👷‍♀️ Run test
+        run: pnpm test
+        env:
+          NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID:
+            ${{ secrets.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID }}
+          SIWE_SESSION_SECRET: ${{ secrets.SIWE_SESSION_SECRET }}
+          NFT_STORAGE_API_KEY: ${{ secrets.NFT_STORAGE_API_KEY }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          CREATOR_ADDRESS: ${{ secrets.CREATOR_ADDRESS }}
+          CREATOR_SECRET: ${{ secrets.CREATOR_SECRET }}
+          ETHEREUM_RPC_URL: ${{ secrets.ETHEREUM_RPC_URL }}
       - name: ✅ All good
         run: echo "✅ All good" >> $GITHUB_STEP_SUMMARY
