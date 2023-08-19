@@ -20,7 +20,7 @@ export default function NavigationMenuLogo() {
           </NavigationLogoTrigger>
           <NavigationMenuContent className="bg-white min-w-[320px] min-h-max px-4 py-6 rounded-xl flex flex-col space-y-4">
             <div>
-              <h3 className="text-slate-400 px-4 mb-2">Navigation</h3>
+              <h3 className="text-gray-400 px-4 mb-2">Navigation</h3>
               <ul className="flex flex-col space-y-1">
                 <li>
                   <Link
@@ -52,7 +52,7 @@ export default function NavigationMenuLogo() {
               </ul>
             </div>
             <div>
-              <h3 className="text-slate-400 px-4 mb-2">Community</h3>
+              <h3 className="text-gray-400 px-4 mb-2">Community</h3>
               <ul className="flex flex-col space-y-1">
                 <li>
                   <Link

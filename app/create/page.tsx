@@ -39,7 +39,7 @@ export default function Create() {
 
         {/* Start Footer */}
         <div className="flex w-full px-6 py-10 mt-40 md:px-7 lg:px-8">
-          <p className="text-sm font-medium mx-auto text-slate-400">
+          <p className="text-sm font-medium mx-auto text-gray-400">
             &copy; 2023 Yan Brothers
           </p>
         </div>

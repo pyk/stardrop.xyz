@@ -142,7 +142,7 @@ export default function Home() {
       {/* End hero */}
 
       {/* Start intro */}
-      <article className="prose text-lg font-medium text-slate-400 max-w-xl my-10 sm:my-20 mx-6 sm:mx-auto">
+      <article className="prose text-lg font-medium text-gray-400 max-w-xl my-10 sm:my-20 mx-6 sm:mx-auto">
         <p className="text-lg sm:text-xl md:text-2xl">
           <span className="text-white">Stardrop </span> is a permissionless
           platform that allows you to create NFTs that only users who have
@@ -221,7 +221,7 @@ export default function Home() {
 
       {/* Start Footer */}
       <div className="flex w-full px-6 py-10 mt-40 md:px-7 lg:px-8">
-        <p className="text-sm font-medium mx-auto text-slate-400">
+        <p className="text-sm font-medium mx-auto text-gray-400">
           &copy; 2023 Yan Brothers
         </p>
       </div>

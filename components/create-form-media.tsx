@@ -40,7 +40,7 @@ export function CreateFormMedia(props: {
                 </div>
                 <label
                   htmlFor="replace-media"
-                  className="font-medium mt-2 cursor-pointer flex flex-col items-center rounded-xl py-4 w-full ring-2 text-slate-400 ring-white/10 hover:ring-white/20 hover:text-white hover:bg-white/10"
+                  className="font-medium mt-2 cursor-pointer flex flex-col items-center rounded-xl py-4 w-full ring-2 text-gray-400 ring-white/10 hover:ring-white/20 hover:text-white hover:bg-white/10"
                 >
                   <p className="text-center text-base leading-0">
                     Replace media
@@ -82,12 +82,12 @@ export function CreateFormMedia(props: {
                 )}
               >
                 <div className="flex flex-col items-center justify-center pt-5 pb-6 space-y-4">
-                  <ImageIcon size={32} className="text-slate-400" />
+                  <ImageIcon size={32} className="text-gray-400" />
                   <div className="flex flex-col space-y-2 items-center leading-none">
-                    <p className="text-slate-400 font-medium">
+                    <p className="text-gray-400 font-medium">
                       Click to upload media from your device
                     </p>
-                    <p className="text-sm text-slate-400 leading-none">
+                    <p className="text-sm text-gray-400 leading-none">
                       SVG, PNG, JPG, GIF or MP4
                     </p>
                   </div>

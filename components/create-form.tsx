@@ -158,7 +158,7 @@ export function CreateForm() {
               <h1 className="font-medium text-3xl md:text-4xl text-white">
                 Create Stardrop
               </h1>
-              <p className="font-medium text-slate-400 text-lg">
+              <p className="font-medium text-gray-400 text-lg">
                 Reward onchain activity with NFT
               </p>
             </div>
@@ -232,7 +232,7 @@ export function CreateForm() {
                 <h2 className="font-medium text-xl text-white leading-6">
                   Smart Contract Interaction
                 </h2>
-                <p className="font-medium text-base text-slate-400 mt-1">
+                <p className="font-medium text-base text-gray-400 mt-1">
                   Please specify the required smart contract interaction
                 </p>
               </div>
@@ -354,7 +354,7 @@ export function CreateForm() {
           <h1 className="text-3xl font-medium sm:text-5xl md:text-6xl text-center max-w-2xl mx-auto">
             Create Stardrop
           </h1>
-          <p className="text-xl sm:text-2xl sm:mt-2 md:text-3xl max-w-xl font-medium text-slate-400 mx-auto text-center">
+          <p className="text-xl sm:text-2xl sm:mt-2 md:text-3xl max-w-xl font-medium text-gray-400 mx-auto text-center">
             Start creating a new Stardrop by connecting your wallet first
           </p>
         </div>
